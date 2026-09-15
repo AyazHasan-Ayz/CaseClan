@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import {test} from 'node:test';
+import {awardMembership,emptyMembership,isElite} from '../lib/membership.ts';
+const paid=(orderId:string,clans:('NOIR'|'VALOR'|'SAGE'|'AURA')[])=>({orderId,status:'paid' as const,clans,memberNumber:'001247',year:2026});
+test('first paid purchase assigns clan and membership number',()=>{const m=awardMembership(emptyMembership,paid('one',['NOIR']));assert.equal(m.primaryClan,'NOIR');assert.equal(m.number,'001247');assert.deepEqual(m.collected,['NOIR']);});
+test('later purchases preserve primary clan, year and number',()=>{const first=awardMembership(emptyMembership,paid('one',['NOIR']));const next=awardMembership(first,{...paid('two',['VALOR']),memberNumber:'009999',year:2027});assert.equal(next.primaryClan,'NOIR');assert.equal(next.number,'001247');assert.equal(next.since,2026);assert.deepEqual(next.collected,['NOIR','VALOR']);});
+test('failed or pending payment cannot assign membership',()=>{for(const status of ['pending','failed'] as const)assert.equal(awardMembership(emptyMembership,{...paid('one',['NOIR']),status}),emptyMembership)});
+test('payment event replay is idempotent',()=>{const first=awardMembership(emptyMembership,paid('one',['NOIR']));assert.equal(awardMembership(first,paid('one',['VALOR'])),first)});
+test('mixed first order takes first clan and collects every distinct clan',()=>{const m=awardMembership(emptyMembership,paid('one',['SAGE','NOIR','SAGE']));assert.equal(m.primaryClan,'SAGE');assert.deepEqual(m.collected,['SAGE','NOIR']);assert.equal(isElite(m),false)});
+test('all four clans unlock elite without changing primary identity',()=>{const first=awardMembership(emptyMembership,paid('one',['AURA']));const m=awardMembership(first,paid('two',['NOIR','SAGE','VALOR']));assert.equal(isElite(m),true);assert.equal(m.primaryClan,'AURA')});
+test('empty successful order makes no membership',()=>assert.equal(awardMembership(emptyMembership,paid('empty',[])),emptyMembership));

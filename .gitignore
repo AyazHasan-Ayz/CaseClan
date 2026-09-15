@@ -1,0 +1,9 @@
+node_modules/
+.next/
+out/
+.sites-runtime/
+.env*
+!.env.example
+tsconfig.tsbuildinfo
+qa/
+.next-production/
