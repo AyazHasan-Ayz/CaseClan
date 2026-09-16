@@ -1,0 +1,8 @@
+import fs from 'node:fs';
+const edit=(p,f)=>fs.writeFileSync(p,f(fs.readFileSync(p,'utf8')));
+edit('components/DesignPreview.tsx',s=>s.replace(".replaceAll(' ','-')",".replace(/[^a-z]+/g,'-')"));
+edit('app/globals.css',s=>s.replaceAll('.proof-initial-+-name','.proof-initial-name'));
+edit('components/StoreProvider.tsx',s=>s.replace('const key=`${p.id}:${device}:${color}:${designIdentity(design)}`','const existing=ref.current.bag.find(i=>i.productId===p.id&&i.device===device&&i.color===color&&designIdentity(i.design)===designIdentity(design));const key=existing?.key||crypto.randomUUID()'));
+edit('components/Account.tsx',s=>s.replace("import {clans,clanInfo,money,products,deviceName,productImage}","import {money,products,deviceName,productImage}").replace("import {isElite} from '@/lib/membership';\n",'').replace("import {ClanMembership} from './Home';\n",''));
+edit('components/InfoPages.tsx',s=>s.replace(/ if\(slug==='collections'\)return .*?;\r?\n if\(slug==='our-story'\)/s," if(slug==='collections')return <section className=\"section\"><StyleCards/></section>;\n if(slug==='our-story')"));
+edit('components/ProductDetail.tsx',s=>s.replace('Product,Design,defaultDevice','Product,Design,products,defaultDevice').replace('const form=useRef<HTMLFormElement>(null);','const form=useRef<HTMLFormElement>(null);const selectedProduct=p.kind===\'personalized\'?(products.find(x=>x.kind===\'personalized\'&&x.style===design.style)||p):p;').replace('s.add(p,device,p.colors[0]','s.add(selectedProduct,device,p.colors[0]').replaceAll('money(p.price)','money(selectedProduct.price)').replace(':p.name.toUpperCase()',':selectedProduct.name.toUpperCase()'));
