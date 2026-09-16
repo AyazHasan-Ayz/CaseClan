@@ -13,3 +13,12 @@
 ## Scope
 
 Checks use the frontend demo adapter. They do not validate a payment gateway, live inventory, shipping, authentication or messaging backend.
+
+## Final production verification — 16 September 2026
+
+- Production build passed and exported 40 HTML documents, including error pages.
+- Validated 3,011 internal link and asset references with zero missing targets.
+- Production account retained NOIR as Primary Clan, member number, and both NOIR/VALOR collected badges.
+- Account and product page overflow checks passed at 320, 375, 390, 430, 768, 1024, 1280 and 1440 pixels.
+- WebMCP catalog returned matching products and intentionally rejected a non-string query. No browser errors observed on the account page.
+
