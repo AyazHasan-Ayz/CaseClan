@@ -24,3 +24,11 @@ Prompt: Five equally sized panels, 3:1 total, of conceptual flagship phones emer
 
 `node scripts/prepare-assets.mjs` creates the WebP derivatives and extracts the four clan panels. No external image URLs are required at runtime. All UI asset references are centralized in `lib/catalog.ts`.
 
+
+## Personalized launch assets — September 2026
+
+The ten user-supplied Ayaz Word Cloud photographs are optimized without altering their designs into `public/images/personalized/`. Each filename maps directly to its model in `lib/catalog.ts`. `scripts/prepare-personalized.mjs` records the original local filenames and conversion settings.
+
+The 17 September lifestyle hero was supplied by the user as `ChatGPT Image Sep 17, 2026, 02_00_26 PM.png`. Its exact original is retained at `public/hero-caseclan-lifestyle.png`; `public/images/hero-caseclan-lifestyle.webp` is the optimized derivative used by the hero. The source aspect ratio is preserved and CSS uses object-fit: cover. No image generation or substitute stock was used for this update.
+
+Earlier generated clan assets remain archived and are not promoted as available launch products.
