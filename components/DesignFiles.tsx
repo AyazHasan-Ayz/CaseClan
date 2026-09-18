@@ -1,0 +1,5 @@
+'use client';
+import {useState} from 'react';
+import {downloadBlob,readArtifact,Customization} from '@/lib/customizer';
+import {Download} from 'lucide-react';
+export default function DesignFiles({id}:{id:string}){const[message,setMessage]=useState('');async function download(){try{const saved=await readArtifact<{print:Blob;preview:string;customization:Customization}>(id);if(!saved){setMessage('Design files are available only in the browser where this case was created.');return}downloadBlob(saved.print,'caseclan-flat-print.png');downloadBlob(new Blob([JSON.stringify({...saved.customization,productionApproved:false},null,2)],{type:'application/json'}),'caseclan-design.json');setMessage('Flat print artwork and design data downloaded.')}catch{setMessage('The saved design files could not be opened.')}}return <div className="design-files"><button className="text-link" onClick={download}><Download size={14}/> Download print files</button>{message&&<p className="small muted" role="status">{message}</p>}</div>}
