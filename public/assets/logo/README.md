@@ -1,0 +1,1 @@
+Place the original supplied CASECLAN logo here and set `brandAssets.logo` in `lib/assets.ts` to its public path. No standalone logo asset was available in the provided attachments. The existing wordmark remains until the original is supplied.
