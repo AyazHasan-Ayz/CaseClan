@@ -32,3 +32,7 @@ The ten user-supplied Ayaz Word Cloud photographs are optimized without altering
 The 17 September lifestyle hero was supplied by the user as `ChatGPT Image Sep 17, 2026, 02_00_26 PM.png`. Its exact original is retained at `public/hero-caseclan-lifestyle.png`; `public/images/hero-caseclan-lifestyle.webp` is the optimized derivative used by the hero. The source aspect ratio is preserved and CSS uses object-fit: cover. No image generation or substitute stock was used for this update.
 
 Earlier generated clan assets remain archived and are not promoted as available launch products.
+
+## Current September 18 supplied assets
+
+The active homepage/device/design photographs are mapped centrally in `lib/assets.ts`. `scripts/prepare-september-assets.mjs` converts the exact supplied September 18 PNGs to optimized WebP under `public/assets/phones` and `public/assets/designs`, preserving their artwork. Five design images cover Minimal Name, Signature Style, Initial + Name, Word Cloud and Photo Collage. The September 17 supplied lifestyle hero remains active. Earlier asset records below/above describe historical assets, not replacement imagery for these supplied photographs. No standalone transparent logo or calibrated device GLB was supplied; see the respective public asset/model READMEs.

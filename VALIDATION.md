@@ -1,18 +1,15 @@
-# Current validation — 17 September 2026
+# Current validation — 21 September 2026
 
-- Production build passed: 49 generation steps and 48 exported HTML documents, including error pages.
-- All 11 domain tests passed (four personalization identity tests and seven reserved future membership tests).
-- Export audit checked 3,767 local links and asset references with zero missing targets.
-- Lifestyle hero checked at 320, 375, 390, 430, 768, 1024 and 1440 CSS pixels: image loaded, both CTAs present, no horizontal overflow.
-- Desktop and 375px mobile hero screenshots inspected: supplied lifestyle image, clean crop, readable copy and intact CTA area.
-- Wishlist layouts checked at 375, 390, 430, 768, 1024 and 1440 pixels without overflow.
-- Quick-add tested: name and phone selection carried into the cart drawer.
-- Cart icon reached /cart; quantity updates recalculated totals; removal restored the empty state.
-- Search modal returned both Word Cloud designs. Mobile iPhone navigation opened /collections/iphone.
-- Wishlist selections persisted across navigation and reload.
-- Samsung collection renders a clear coming-soon state with a working continue-browsing link.
-- Earlier personalization flow checked font, color, style, device, saved order and demo checkout success. Upload validation rejected a missing image and displayed a selected image with print instructions.
+- Production build passed, including TypeScript checks; 53 exported HTML pages.
+- All 14 tests passed: personalization identity, reserved clan rules, rotated print-safe bounds, layer hit testing and template layout.
+- Export audit checked 4,429 local links and asset references with zero missing targets.
+- Homepage, basic setup, editor and final preview checked at 320, 360, 375, 390, 430, 768, 1024, 1280 and 1440 pixels without horizontal overflow.
+- Desktop and mobile layouts visually inspected against the supplied reference.
+- Tested device/style/name/color selection, direct 3D artwork dragging, rotation, font and size changes, duplicate/delete, undo/redo, reset and draft restoration.
+- Tested image upload, final preview, cart quantity totals and local demo checkout.
+- Downloaded print PNG verified as 2048 × 4096 with alpha. Separate customization JSON retained device, layers and uploaded image; productionApproved remained false.
+- Checkout confirmation now scrolls to the top.
 
 ## Scope
 
-This remains a frontend preview. Payments, production submission, real sign-in, message delivery and cross-device persistence are not connected. Clan membership is coming soon, not awarded by launch checkout.
+Frontend demo checkout only: no payment is collected and no production order is submitted. Drafts and artwork files persist in this browser using IndexedDB; cart/profile/orders use local browser storage. Production payments, authentication, database, fulfillment and message delivery require service integration. Real calibrated device GLB files and an original transparent logo were not supplied. The editor explicitly labels its development geometry; generated print files require production alignment approval. Clan collections remain coming soon. No fabricated customer reviews are published.

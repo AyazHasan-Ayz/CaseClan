@@ -30,3 +30,9 @@ This is a complete frontend preview. Cart, wishlist, uploaded preview image, ord
 Clan membership is not awarded by launch orders. Existing legacy membership data is preserved but hidden; the pure membership rules remain reserved for a future release. Archived product orders render safely.
 
 Before real sales, connect authenticated account APIs, authoritative product prices and inventory, a payment gateway, original artwork storage and review, fulfilment, and transactional messaging. Publish verified specifications, final personalized-return terms and genuine customer reviews.
+
+## September 2026 customization studio
+
+`/customize/` provides device selection, basic setup, a Three.js editor and final preview. `/custom-upload/` enters the image-upload journey. Text and image layers support movement, sizing, rotation, ordering and undo/redo. The editor saves drafts in IndexedDB and attaches an artifact ID to cart/order selections. `DesignFiles` retrieves separate 2048 × 4096 flat print PNG and customization JSON downloads. Preview screenshots are separate from print artwork.
+
+`lib/customizer.ts` owns templates, safe-area rules, persistence and approved-model configuration. Add calibrated per-device GLBs following `public/models/README.md`. Current geometry is visibly labeled for development and is not a production fit guarantee. `lib/assets.ts` centralizes supplied September photographs and the optional original logo slot. See `VALIDATION.md` for tested flows and production integration boundaries.
