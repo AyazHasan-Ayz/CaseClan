@@ -27,3 +27,11 @@ test('word cloud keeps supporting words apart from the brand footer',()=>{
  assert.ok(layers.every(l=>l.y+l.height/2<1830));
  assert.equal(templateLayers('','Photo Collage','#fff').length,0);
 });
+test('phone families use their matching 2.5D camera template',()=>{
+ assert.equal(modelConfig('iphone-15').cameraLayout,'dual-diagonal');
+ assert.equal(modelConfig('iphone-16').cameraLayout,'dual-vertical');
+ assert.equal(modelConfig('iphone-17').cameraLayout,'dual-vertical');
+ assert.equal(modelConfig('iphone-16-pro-max').cameraLayout,'triple-square');
+ assert.equal(modelConfig('iphone-17-pro').cameraLayout,'triple-wide');
+ assert.ok(modelConfig('iphone-17-pro-max').camera.width>850);
+});
