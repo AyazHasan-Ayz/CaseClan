@@ -1,12 +1,153 @@
 'use client';
-import {useEffect,useState,useRef} from 'react';
-import Link from 'next/link';
-import {useRouter} from 'next/navigation';
-import {Heart,ArrowRight,Upload} from 'lucide-react';
-import {Product,Design,products,defaultDevice,deviceName,money,productImage,styles} from '@/lib/catalog';
-import {fontFamilies,normalizeName} from '@/lib/personalization';
-import {useStore} from './StoreProvider';
+
 import dynamic from 'next/dynamic';
-import {initialCustomization,templateLayers,constrainLayer} from '@/lib/customizer';
+import Link from 'next/link';
+import {useEffect,useMemo,useRef,useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {ArrowRight,Heart,ImagePlus,LockKeyhole,Upload} from 'lucide-react';
+import {Design,Product,defaultDevice,deviceName,money,productImage,products} from '@/lib/catalog';
+import {normalizeName} from '@/lib/personalization';
+import {constrainLayer,initialCustomization,saveArtifact,textLayer} from '@/lib/customizer';
+import {createTemplateCustomization,defaultTemplateValues,templateForStyle,TemplateField,TemplateValues} from '@/lib/templates';
+import {useStore} from './StoreProvider';
+
 const CaseScene=dynamic(()=>import('./CaseScene'),{ssr:false});
-export default function ProductDetail({product:p,upload=false}:{product:Product;upload?:boolean}){const s=useStore(),router=useRouter();const[device,setDevice]=useState(defaultDevice(p)),[proof,setProof]=useState(upload),[design,setDesign]=useState<Design>({name:p.kind==='ready'?'Ayaz':'',font:'Editorial',textColor:'#d7181f',style:p.style}),[error,setError]=useState(''),[loading,setLoading]=useState(false);const form=useRef<HTMLFormElement>(null);const selectedProduct=p.kind==='personalized'?(products.find(x=>x.kind==='personalized'&&x.style===design.style)||p):p;useEffect(()=>{const selected=new URLSearchParams(window.location.search).get('device');if(selected&&p.devices.includes(selected))setDevice(selected)},[p]);const update=(patch:Partial<Design>)=>{setDesign(d=>({...d,...patch}));setProof(true);setError('')};const add=(buy=false)=>{if(design.style==='Photo Collage'){router.push(`/customize/?template=Photo%20Collage&device=${device}`);return}if(!form.current?.reportValidity())return;if(upload&&!design.upload){setError('Please upload your design first.');return}if(!upload&&p.kind!=='ready'&&!normalizeName(design.name)){setError('Please enter the name to print.');return}s.add(selectedProduct,device,p.colors[0],p.kind==='ready'?undefined:{...design,name:normalizeName(design.name)});if(buy){s.setDrawer(false);router.push('/checkout/')}};async function readFile(file?:File){if(!file)return;setError('');if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>10*1024*1024){setError('Choose a JPG, PNG or WebP image under 10 MB.');return}setLoading(true);try{const bitmap=await createImageBitmap(file);if(bitmap.width<300||bitmap.height<300)throw new Error('Use an image at least 300 × 300 pixels.');const ratio=Math.min(1,1200/Math.max(bitmap.width,bitmap.height));const canvas=document.createElement('canvas');canvas.width=Math.round(bitmap.width*ratio);canvas.height=Math.round(bitmap.height*ratio);canvas.getContext('2d')!.drawImage(bitmap,0,0,canvas.width,canvas.height);bitmap.close();update({upload:canvas.toDataURL('image/webp',.8),filename:file.name});}catch(e){setError(e instanceof Error?e.message:'This image could not be read. Try another file.')}finally{setLoading(false)}}return <><div className="product-page"><p className="breadcrumbs"><Link href="/">Home</Link><span>/</span><Link href="/shop/">Shop</Link><span>/</span>{p.name}</p><div className="product-detail-layout"><div className="gallery">{proof?<CaseScene design={{...initialCustomization,device,name:design.name,template:design.style,color:design.textColor,background:design.style==='Signature Style'?'#eee9df':'#191a1b',layers:templateLayers(design.name,design.style,design.textColor).map(l=>constrainLayer({...l,font:design.font},device))}}/>:<div className="gallery-main supplied-gallery"><img src={productImage(p,device)} alt={`Case design reference for ${deviceName(device)}`}/></div>}<div className="preview-tabs"><button className={!proof?'selected':''} onClick={()=>setProof(false)}>Supplied case photo</button><button className={proof?'selected':''} onClick={()=>setProof(true)}>Live 2.5D preview</button></div><p className="small muted">Supplied design photograph. Personalize it in the interactive editor to create your own artwork.</p></div><form ref={form} className="product-details" onSubmit={e=>{e.preventDefault();add()}}><p className="eyebrow">{upload?'YOUR ART. YOUR EVERYDAY.':p.collection.toUpperCase()}</p><h1>{upload?'DESIGN YOUR OWN COVER':selectedProduct.name.toUpperCase()}</h1><p className="detail-rating muted">☆☆☆☆☆ · New design · No reviews yet</p><p className="detail-price">{money(selectedProduct.price)} <span>Inclusive of all taxes</span></p><p className="product-description">{upload?'Upload your artwork, logo, photo, or concept. Make your case a canvas for something personal.':'A premium black case. A personal expression. Choose your phone, then make every detail your own.'}</p><label className="field-label">Phone model<select value={device} onChange={e=>setDevice(e.target.value)}>{p.devices.map(d=><option key={d} value={d}>{deviceName(d)}</option>)}</select></label>{upload?<><label className="upload-field"><Upload size={25}/><strong>{loading?'Preparing preview…':design.filename||'Choose your design'}</strong><span>JPG, PNG, WebP · Up to 10 MB · Minimum 300 × 300</span><input type="file" accept="image/png,image/jpeg,image/webp" aria-label="Upload image or design" disabled={loading} onChange={e=>readFile(e.target.files?.[0])}/></label>{design.upload&&<button type="button" className="text-link" onClick={()=>update({upload:undefined,filename:undefined})}>Remove uploaded design</button>}<label className="field-label">Print instructions<textarea maxLength={1000} rows={3} placeholder="Tell us about placement, colors, or any details to keep." value={design.instructions||''} onChange={e=>update({instructions:e.target.value})}/></label><p className="approval-note">All uploaded designs are subject to quality and print approval.</p><p className="small muted">Preview files stay in this browser. No artwork is submitted to production.</p></>:p.kind==='ready'?<p className="approval-note">Ready design: Ayaz Word Cloud, exactly as shown in the supplied photograph.</p>:<><label className="field-label">Name to print<input required maxLength={18} value={design.name} placeholder="Your name" onChange={e=>update({name:e.target.value})}/><span className="small muted">Up to 18 characters · {design.name.length}/18</span></label><div className="personalization-options"><label className="field-label">Font<select value={design.font} onChange={e=>update({font:e.target.value})}>{Object.keys(fontFamilies).map(f=><option key={f}>{f}</option>)}</select></label><label className="field-label">Style<select value={design.style} onChange={e=>update({style:e.target.value})}>{styles.map(f=><option key={f}>{f}</option>)}</select></label></div><fieldset className="text-colors"><legend>Text color</legend>{[['Red','#d7181f'],['Ivory','#eee8dc'],['Silver','#aeb4bc'],['Gold','#c9a76a']].map(([label,color])=><button type="button" key={color} aria-label={`${label} text`} aria-pressed={design.textColor===color} className={design.textColor===color?'selected':''} onClick={()=>update({textColor:color})}><i style={{background:color}}/>{label}</button>)}</fieldset><button type="button" className="text-link" onClick={()=>setProof(true)}>PREVIEW YOUR DESIGN <ArrowRight size={14}/></button></>}{error&&<p role="alert" className="form-error">{error}</p>}<Link className="button wide" href={`/customize/?template=${encodeURIComponent(design.style)}&device=${device}&name=${encodeURIComponent(design.name)}&color=${encodeURIComponent(design.textColor)}`}>OPEN PREMIUM EDITOR <ArrowRight size={16}/></Link><div className="add-row"><button disabled={loading} className="button" type="submit">ADD TO CART — {money(selectedProduct.price)} <ArrowRight size={15}/></button><button type="button" className="wishlist-detail" aria-label="Save to wishlist" aria-pressed={s.wishlist.includes(p.id)} onClick={()=>s.toggleWish(p.id)}><Heart size={20} fill={s.wishlist.includes(p.id)?'currentColor':'none'}/></button></div><button disabled={loading} type="button" className="button outline wide" onClick={()=>add(true)}>BUY NOW</button><div className="purchase-assurances"><span>Free shipping above ₹999</span><span>Easy 7-day returns</span></div><p className="small muted">Frontend preview · No payment or production order is placed. Final specifications and personalized returns terms will be confirmed before launch.</p></form></div></div><section className="section product-faq"><div><p className="eyebrow">THOUGHTFULLY PERSONAL</p><h2>Your design. Every detail.</h2></div><div>{[{q:'How accurate is the preview?',a:'The live 2.5D preview uses a separate template and camera layout for each listed phone. Final fit and print placement must still be checked against the fulfillment provider\'s production template before printing.'},{q:'Can I upload my own design?',a:'Yes. Use the Custom Upload page for JPG, PNG or WebP artwork. This preview stores a resized copy locally; production will require the original file and print approval.'},{q:'Which model should I choose?',a:'Check Settings → About on your phone and select its exact model. Pro, Pro Max and Plus versions have different camera layouts and dimensions.'},{q:'When will my order ship?',a:'This is a frontend preview. Demo orders are saved in this browser and are not charged or shipped. Production timelines will be confirmed before launch.'}].map(f=><details key={f.q}><summary>{f.q}<span>+</span></summary><p>{f.a}</p></details>)}</div></section></>}
+
+async function prepareImage(file:File){
+ if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>10*1024*1024)throw new Error('Choose a JPG, PNG or WebP image under 10 MB.');
+ const bitmap=await createImageBitmap(file);
+ try{
+  if(bitmap.width<300||bitmap.height<300)throw new Error('Use an image at least 300 × 300 pixels.');
+  const ratio=Math.min(1,1400/Math.max(bitmap.width,bitmap.height));
+  const canvas=document.createElement('canvas');
+  canvas.width=Math.max(1,Math.round(bitmap.width*ratio));
+  canvas.height=Math.max(1,Math.round(bitmap.height*ratio));
+  canvas.getContext('2d')!.drawImage(bitmap,0,0,canvas.width,canvas.height);
+  return canvas.toDataURL('image/webp',.86);
+ }finally{bitmap.close()}
+}
+
+export default function ProductDetail({product:p,upload=false}:{product:Product;upload?:boolean}){
+ const store=useStore(),router=useRouter(),form=useRef<HTMLFormElement>(null);
+ const template=useMemo(()=>templateForStyle(p.style),[p.style]);
+ const [device,setDevice]=useState(defaultDevice(p));
+ const [values,setValues]=useState<TemplateValues>(()=>defaultTemplateValues(template));
+ const [proof,setProof]=useState(!upload);
+ const [error,setError]=useState('');
+ const [loading,setLoading]=useState('');
+ const [customUpload,setCustomUpload]=useState<Design>({name:'Custom artwork',font:'Modern',textColor:'#ffffff',style:'Custom Upload'});
+
+ useEffect(()=>{
+  const selected=new URLSearchParams(window.location.search).get('device');
+  if(selected&&p.devices.includes(selected))setDevice(selected);
+ },[p]);
+
+ const customization=useMemo(()=>{
+  if(upload){
+   const layers=customUpload.upload?[constrainLayer({...textLayer('Uploaded artwork'),type:'image' as const,src:customUpload.upload,width:760,height:1180,x:500,y:1120},device)]:[];
+   return {...initialCustomization,device,template:'Custom Upload',name:'Custom artwork',layers};
+  }
+  const next=createTemplateCustomization(template,values,device);
+  return {...next,layers:next.layers.map(layer=>constrainLayer(layer,device))};
+ },[customUpload.upload,device,template,upload,values]);
+
+ const selectedProduct=p.kind==='personalized'?(products.find(item=>item.kind==='personalized'&&item.style===template.name)||p):p;
+ const firstText=template.editableLayers.find(field=>field.type==='text');
+ const quickDesign:Design={
+  name:firstText?normalizeName(values[firstText.id]||''):upload?'Custom artwork':'Photo collage',
+  font:firstText?.layer.font||'Modern',
+  textColor:firstText?.layer.color||'#ffffff',
+  style:upload?'Custom Upload':template.name,
+  templateId:upload?undefined:template.id,
+  personalization:upload?undefined:values,
+  upload:upload?customUpload.upload:template.editableLayers.find(field=>field.type==='image')?values[template.editableLayers.find(field=>field.type==='image')!.id]:undefined,
+  filename:customUpload.filename,
+  instructions:customUpload.instructions,
+  customization
+ };
+
+ const updateValue=(id:string,value:string)=>{setValues(current=>({...current,[id]:value}));setProof(true);setError('')};
+
+ async function readTemplateImage(field:TemplateField,file?:File){
+  if(!file)return;
+  setLoading(field.id);setError('');
+  try{updateValue(field.id,await prepareImage(file))}catch(reason){setError(reason instanceof Error?reason.message:'This image could not be read. Try another file.')}finally{setLoading('')}
+ }
+
+ async function readCustomImage(file?:File){
+  if(!file)return;
+  setLoading('custom');setError('');
+  try{const prepared=await prepareImage(file);setCustomUpload(current=>({...current,upload:prepared,filename:file.name}));setProof(true)}catch(reason){setError(reason instanceof Error?reason.message:'This image could not be read. Try another file.')}finally{setLoading('')}
+ }
+
+ const validate=()=>{
+  if(!form.current?.reportValidity())return false;
+  if(upload&&!customUpload.upload){setError('Please upload your design first.');return false}
+  const missing=template.editableLayers.find(field=>field.required&&!values[field.id]?.trim());
+  if(!upload&&missing){setError(`${missing.label} is required.`);return false}
+  return true;
+ };
+
+ const add=(buy=false)=>{
+  if(!validate())return;
+  store.add(selectedProduct,device,p.colors[0],quickDesign);
+  if(buy){store.setDrawer(false);router.push('/checkout/')}
+ };
+
+ async function openAdvanced(){
+  if(!validate())return;
+  setLoading('handoff');setError('');
+  try{
+   await saveArtifact('template-handoff',{design:customization,step:2,templateId:template.id,values});
+   router.push('/customize/?handoff=1');
+  }catch{setError('Unable to open the advanced editor. Free some browser storage and try again.');setLoading('')}
+ }
+
+ return <>
+  <div className="product-page">
+   <p className="breadcrumbs"><Link href="/">Home</Link><span>/</span><Link href="/shop/">Shop</Link><span>/</span>{p.name}</p>
+   <div className="product-detail-layout">
+    <div className="gallery">
+     {proof?<CaseScene design={customization}/>:<div className="gallery-main supplied-gallery"><img src={productImage(p,device)} alt={`Original ${p.name} template for ${deviceName(device)}`}/></div>}
+     {!upload&&<div className="preview-tabs"><button className={!proof?'selected':''} onClick={()=>setProof(false)}>Original design</button><button className={proof?'selected':''} onClick={()=>setProof(true)}>Your live preview</button></div>}
+     <p className="small muted">{upload?'Live device-specific 2.5D preview.':'The template composition stays fixed. Only the fields marked below are replaced.'}</p>
+    </div>
+    <form ref={form} className="product-details quick-personalize" onSubmit={event=>{event.preventDefault();add()}}>
+     <p className="eyebrow">{upload?'YOUR ART. YOUR EVERYDAY.':'QUICK PERSONALIZE'}</p>
+     <h1>{upload?'DESIGN YOUR OWN COVER':selectedProduct.name.toUpperCase()}</h1>
+     <p className="detail-rating muted">☆☆☆☆☆ · New design · No reviews yet</p>
+     <p className="detail-price">{money(selectedProduct.price)} <span>Inclusive of all taxes</span></p>
+     <p className="product-description">{upload?'Upload your artwork and preview it on your chosen phone.':`Keep the original ${template.name} composition and replace only your personalization.`}</p>
+     <label className="field-label">Phone model<select value={device} onChange={event=>setDevice(event.target.value)}>{p.devices.map(item=><option key={item} value={item}>{deviceName(item)}</option>)}</select></label>
+
+     {upload?<>
+      <label className="upload-field"><Upload size={25}/><strong>{loading==='custom'?'Preparing preview…':customUpload.filename||'Choose your design'}</strong><span>JPG, PNG, WebP · Up to 10 MB · Minimum 300 × 300</span><input required type="file" accept="image/png,image/jpeg,image/webp" aria-label="Upload image or design" disabled={!!loading} onChange={event=>readCustomImage(event.target.files?.[0])}/></label>
+      <label className="field-label">Print instructions<textarea maxLength={1000} rows={3} placeholder="Tell us about placement, colors, or details to keep." value={customUpload.instructions||''} onChange={event=>setCustomUpload(current=>({...current,instructions:event.target.value}))}/></label>
+     </>:<>
+      <div className="template-lock-note"><LockKeyhole size={18}/><div><strong>Original layout protected</strong><span>Typography, placement, colors, spacing, graphics, and background remain locked.</span></div></div>
+      <div className="template-fields">
+       {template.editableLayers.map(field=>field.type==='text'?<label className="field-label" key={field.id}>{field.label}<div className="name-input"><input required={field.required} maxLength={field.maxCharacters} value={values[field.id]||''} placeholder={field.placeholder} onChange={event=>updateValue(field.id,event.target.value)}/><span>{(values[field.id]||'').length}/{field.maxCharacters}</span></div></label>:<label className={`template-upload ${values[field.id]?'has-image':''}`} key={field.id}><ImagePlus size={20}/><strong>{loading===field.id?'Preparing photo…':values[field.id]?'Photo ready':field.label}</strong><span>{values[field.id]?'Tap to replace':'JPG, PNG or WebP · Fixed template frame'}</span><input required={field.required&&!values[field.id]} type="file" accept={field.accept} aria-label={field.label} disabled={!!loading} onChange={event=>readTemplateImage(field,event.target.files?.[0])}/></label>)}
+      </div>
+     </>}
+
+     {error&&<p role="alert" className="form-error">{error}</p>}
+     <div className="quick-actions">
+      <button type="button" className="button outline wide" onClick={()=>setProof(true)}>PREVIEW <ArrowRight size={15}/></button>
+      <button disabled={!!loading} className="button wide" type="submit">ADD TO CART — {money(selectedProduct.price)} <ArrowRight size={15}/></button>
+     </div>
+     {!upload&&<button type="button" className="advanced-editor-link" disabled={!!loading} onClick={openAdvanced}>{loading==='handoff'?'OPENING EDITOR…':'CUSTOMIZE THIS DESIGN FURTHER'} <ArrowRight size={15}/></button>}
+     <div className="purchase-assurances"><span>Free shipping above ₹999</span><span>Easy 7-day returns</span></div>
+     <button type="button" className="wishlist-detail" aria-label="Save to wishlist" aria-pressed={store.wishlist.includes(p.id)} onClick={()=>store.toggleWish(p.id)}><Heart size={18} fill={store.wishlist.includes(p.id)?'currentColor':'none'}/> Save this design</button>
+    </form>
+   </div>
+  </div>
+  <section className="section product-faq">
+   <div><p className="eyebrow">DESIGNED TO STAY DESIGNED</p><h2>Your details. The original composition.</h2></div>
+   <div>
+    <details><summary>What can I change?<span>+</span></summary><p>Only the personalization fields shown on this product page. Every other template layer remains fixed.</p></details>
+    <details><summary>What happens when I change phones?<span>+</span></summary><p>Your entries stay intact while the artwork maps to the selected model’s predefined print area and camera layout.</p></details>
+    <details><summary>Can I make more changes?<span>+</span></summary><p>Yes. Choose “Customize this design further” to open the advanced editor. Protected template layers stay identified and your personalization travels with the design.</p></details>
+   </div>
+  </section>
+ </>;
+}
