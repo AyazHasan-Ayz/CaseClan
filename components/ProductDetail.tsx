@@ -7,7 +7,7 @@ import {useRouter} from 'next/navigation';
 import {ArrowRight,Heart,ImagePlus,LockKeyhole,Upload} from 'lucide-react';
 import {Design,Product,defaultDevice,deviceName,money,productImage,products} from '@/lib/catalog';
 import {normalizeName} from '@/lib/personalization';
-import {constrainLayer,initialCustomization,saveArtifact,textLayer} from '@/lib/customizer';
+import {constrainLayer,initialCustomization,readArtifact,renderArtwork,saveArtifact,textLayer} from '@/lib/customizer';
 import {createTemplateCustomization,defaultTemplateValues,templateForStyle,TemplateField,TemplateValues} from '@/lib/templates';
 import {useStore} from './StoreProvider';
 
@@ -28,21 +28,39 @@ async function prepareImage(file:File){
 }
 
 export default function ProductDetail({product:p,upload=false}:{product:Product;upload?:boolean}){
- const store=useStore(),router=useRouter(),form=useRef<HTMLFormElement>(null);
+ const store=useStore(),router=useRouter(),form=useRef<HTMLFormElement>(null),deviceInitialized=useRef(false),valuesTouched=useRef(false);
  const template=useMemo(()=>templateForStyle(p.style),[p.style]);
  const [device,setDevice]=useState(()=>store.selectedDevice&&p.devices.includes(store.selectedDevice)?store.selectedDevice:defaultDevice(p));
  const [values,setValues]=useState<TemplateValues>(()=>defaultTemplateValues(template));
  const [proof,setProof]=useState(!upload);
  const [error,setError]=useState('');
  const [loading,setLoading]=useState('');
+ const [draftReady,setDraftReady]=useState(upload);
  const [customUpload,setCustomUpload]=useState<Design>({name:'Custom artwork',font:'Modern',textColor:'#ffffff',style:'Custom Upload'});
 
  useEffect(()=>{
+  if(!store.ready||deviceInitialized.current)return;
+  deviceInitialized.current=true;
   const selected=new URLSearchParams(window.location.search).get('device');
   if(selected&&p.devices.includes(selected)){setDevice(selected);store.setSelectedDevice(selected)}
   else if(store.selectedDevice&&p.devices.includes(store.selectedDevice))setDevice(store.selectedDevice);
- },[p,store.selectedDevice]);
- const chooseDevice=(next:string)=>{setDevice(next);store.setSelectedDevice(next)};
+ },[p,store.ready]);
+ const chooseDevice=(next:string)=>{deviceInitialized.current=true;setDevice(next);store.setSelectedDevice(next)};
+
+ useEffect(()=>{
+  if(upload){setDraftReady(true);return}
+  let active=true;
+  readArtifact<{values:TemplateValues}>(`product-draft:${template.id}`).then(saved=>{
+   if(active&&saved?.values&&!valuesTouched.current)setValues(current=>({...current,...saved.values}));
+  }).catch(()=>{}).finally(()=>{if(active)setDraftReady(true)});
+  return()=>{active=false};
+ },[template.id,upload]);
+
+ useEffect(()=>{
+  if(upload||!draftReady)return;
+  const timer=setTimeout(()=>{saveArtifact(`product-draft:${template.id}`,{templateId:template.id,values,updatedAt:new Date().toISOString()}).catch(()=>{})},350);
+  return()=>clearTimeout(timer);
+ },[draftReady,template.id,upload,values]);
 
  const customization=useMemo(()=>{
   if(upload){
@@ -68,7 +86,7 @@ export default function ProductDetail({product:p,upload=false}:{product:Product;
   customization
  };
 
- const updateValue=(id:string,value:string)=>{setValues(current=>({...current,[id]:value}));setProof(true);setError('')};
+ const updateValue=(id:string,value:string)=>{valuesTouched.current=true;setValues(current=>({...current,[id]:value}));setProof(true);setError('')};
 
  async function readTemplateImage(field:TemplateField,file?:File){
   if(!file)return;
@@ -90,10 +108,18 @@ export default function ProductDetail({product:p,upload=false}:{product:Product;
   return true;
  };
 
- const add=(buy=false)=>{
+ const add=async(buy=false)=>{
   if(!validate())return;
-  store.add(selectedProduct,device,p.colors[0],quickDesign);
-  if(buy){store.setDrawer(false);router.push('/checkout/')}
+  setLoading('cart');setError('');
+  try{
+   const [printCanvas,previewCanvas]=await Promise.all([renderArtwork(customization,2048),renderArtwork(customization,640)]);
+   const print=await new Promise<Blob>((resolve,reject)=>printCanvas.toBlob(blob=>blob?resolve(blob):reject(new Error('Unable to prepare print artwork.')),'image/png'));
+   const preview=previewCanvas.toDataURL('image/webp',.86);
+   const artifactId=crypto.randomUUID();
+   await saveArtifact(artifactId,{customization,print,preview,templateId:template.id,personalization:upload?undefined:values,createdAt:new Date().toISOString(),productionApproved:false});
+   store.add(selectedProduct,device,p.colors[0],{...quickDesign,artifactId,preview});
+   if(buy){store.setDrawer(false);router.push('/checkout/')}
+  }catch{setError('Unable to save your preview and print artwork. Free some browser storage and try again.')}finally{setLoading('')}
  };
 
  async function openAdvanced(){
@@ -135,7 +161,7 @@ export default function ProductDetail({product:p,upload=false}:{product:Product;
      {error&&<p role="alert" className="form-error">{error}</p>}
      <div className="quick-actions">
       <button type="button" className="button outline wide" onClick={()=>setProof(true)}>PREVIEW <ArrowRight size={15}/></button>
-      <button disabled={!!loading} className="button wide" type="submit">ADD TO CART — {money(selectedProduct.price)} <ArrowRight size={15}/></button>
+      <button disabled={!!loading} className="button wide" type="submit">{loading==='cart'?'SAVING DESIGN…':`ADD TO CART — ${money(selectedProduct.price)}`} {loading!=='cart'&&<ArrowRight size={15}/>}</button>
      </div>
      {!upload&&<button type="button" className="advanced-editor-link" disabled={!!loading} onClick={openAdvanced}>{loading==='handoff'?'OPENING EDITOR…':'CUSTOMIZE THIS DESIGN FURTHER'} <ArrowRight size={15}/></button>}
      <div className="purchase-assurances"><span>Free shipping above ₹999</span><span>Easy 7-day returns</span></div>
