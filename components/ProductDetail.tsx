@@ -30,7 +30,7 @@ async function prepareImage(file:File){
 export default function ProductDetail({product:p,upload=false}:{product:Product;upload?:boolean}){
  const store=useStore(),router=useRouter(),form=useRef<HTMLFormElement>(null);
  const template=useMemo(()=>templateForStyle(p.style),[p.style]);
- const [device,setDevice]=useState(defaultDevice(p));
+ const [device,setDevice]=useState(()=>store.selectedDevice&&p.devices.includes(store.selectedDevice)?store.selectedDevice:defaultDevice(p));
  const [values,setValues]=useState<TemplateValues>(()=>defaultTemplateValues(template));
  const [proof,setProof]=useState(!upload);
  const [error,setError]=useState('');
@@ -39,8 +39,10 @@ export default function ProductDetail({product:p,upload=false}:{product:Product;
 
  useEffect(()=>{
   const selected=new URLSearchParams(window.location.search).get('device');
-  if(selected&&p.devices.includes(selected))setDevice(selected);
- },[p]);
+  if(selected&&p.devices.includes(selected)){setDevice(selected);store.setSelectedDevice(selected)}
+  else if(store.selectedDevice&&p.devices.includes(store.selectedDevice))setDevice(store.selectedDevice);
+ },[p,store.selectedDevice]);
+ const chooseDevice=(next:string)=>{setDevice(next);store.setSelectedDevice(next)};
 
  const customization=useMemo(()=>{
   if(upload){
@@ -118,7 +120,7 @@ export default function ProductDetail({product:p,upload=false}:{product:Product;
      <p className="detail-rating muted">☆☆☆☆☆ · New design · No reviews yet</p>
      <p className="detail-price">{money(selectedProduct.price)} <span>Inclusive of all taxes</span></p>
      <p className="product-description">{upload?'Upload your artwork and preview it on your chosen phone.':`Keep the original ${template.name} composition and replace only your personalization.`}</p>
-     <label className="field-label">Phone model<select value={device} onChange={event=>setDevice(event.target.value)}>{p.devices.map(item=><option key={item} value={item}>{deviceName(item)}</option>)}</select></label>
+     <label className="field-label">Phone model<select value={device} onChange={event=>chooseDevice(event.target.value)}>{p.devices.map(item=><option key={item} value={item}>{deviceName(item)}</option>)}</select></label>
 
      {upload?<>
       <label className="upload-field"><Upload size={25}/><strong>{loading==='custom'?'Preparing preview…':customUpload.filename||'Choose your design'}</strong><span>JPG, PNG, WebP · Up to 10 MB · Minimum 300 × 300</span><input required type="file" accept="image/png,image/jpeg,image/webp" aria-label="Upload image or design" disabled={!!loading} onChange={event=>readCustomImage(event.target.files?.[0])}/></label>
