@@ -1,0 +1,73 @@
+﻿{
+    "model":  "iPhone 15 Pro Max",
+    "slug":  "iphone-15-pro-max",
+    "aspectRatio":  0.48013,
+    "physicalSize":  {
+                         "height":  6.29,
+                         "width":  3.02
+                     },
+    "printArea":  {
+                      "y":  0.012,
+                      "width":  0.85,
+                      "height":  0.976,
+                      "x":  0.075
+                  },
+    "safeArea":  {
+                     "left":  0.055,
+                     "right":  0.055,
+                     "bottom":  0.045,
+                     "top":  0.035
+                 },
+    "cameraExclusion":  {
+                            "y":  0.0275,
+                            "width":  0.5,
+                            "height":  0.256,
+                            "x":  0.059
+                        },
+    "camera":  {
+                   "flash":  [
+                                 0.78,
+                                 0.23
+                             ],
+                   "layout":  "triple-square",
+                   "lenses":  [
+                                  [
+                                      0.31,
+                                      0.29
+                                  ],
+                                  [
+                                      0.69,
+                                      0.48
+                                  ],
+                                  [
+                                      0.31,
+                                      0.72
+                                  ]
+                              ],
+                   "lidar":  [
+                                 0.78,
+                                 0.76
+                             ]
+               },
+    "scalingRules":  {
+                         "maxLayerHeight":  1250,
+                         "canvasWidth":  1000,
+                         "canvasHeight":  2000,
+                         "minLayerSize":  60,
+                         "maxLayerWidth":  870
+                     },
+    "previewCrop":  {
+                        "y":  0,
+                        "width":  0.9,
+                        "height":  1,
+                        "x":  0.05
+                    },
+    "assets":  {
+                   "base":  "base.png",
+                   "shadowOverlay":  "shadow-overlay.png",
+                   "cameraMask":  "camera-mask.png",
+                   "printMask":  "print-mask.png",
+                   "highlightOverlay":  "highlight-overlay.png",
+                   "caseOverlay":  "case-overlay.png"
+               }
+}

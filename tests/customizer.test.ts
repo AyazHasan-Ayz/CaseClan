@@ -1,6 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {existsSync} from 'node:fs';
+import {join} from 'node:path';
 import {constrainLayer,initialCustomization,layerBounds,hitLayer,modelConfig,textLayer} from '../lib/customizer.ts';
+import {modelConfigs} from '../lib/mockups.ts';
+import {devices} from '../lib/catalog.ts';
 test('rotated artwork remains inside the print-safe area and outside the camera',()=>{
  for(const device of ['iphone-17','iphone-17-pro','iphone-17-pro-max','iphone-16-pro','iphone-15-plus']){
   const c=modelConfig(device);
@@ -22,11 +26,22 @@ test('hit testing respects rotations and front-to-back layer order',()=>{
  assert.equal(hitLayer([a,b],580,1100),undefined);
 });
 test('the custom editor starts with a blank case',()=>{assert.equal(initialCustomization.layers.length,0);assert.equal(initialCustomization.name,'Custom artwork')});
-test('phone families use their matching 2.5D camera template',()=>{
+test('phone models use their matching 2.5D camera geometry',()=>{
  assert.equal(modelConfig('iphone-15').cameraLayout,'dual-diagonal');
  assert.equal(modelConfig('iphone-16').cameraLayout,'dual-vertical');
  assert.equal(modelConfig('iphone-17').cameraLayout,'dual-vertical');
  assert.equal(modelConfig('iphone-16-pro-max').cameraLayout,'triple-square');
  assert.equal(modelConfig('iphone-17-pro').cameraLayout,'triple-wide');
  assert.ok(modelConfig('iphone-17-pro-max').camera.width>850);
+});
+test('every supported phone owns a complete layered mockup bundle',()=>{
+ const files=['base.png','case-overlay.png','print-mask.png','camera-mask.png','highlight-overlay.png','shadow-overlay.png','config.json'];
+ assert.equal(new Set(devices.map(device=>modelConfigs[device.slug].assets.base)).size,devices.length);
+ for(const device of devices){
+  const config=modelConfigs[device.slug];
+  assert.ok(config,`${device.slug} requires an explicit model config`);
+  assert.equal(config.slug,device.slug);
+  assert.match(config.assets.base,new RegExp(`/mockups/${device.slug}/base\\.png$`));
+  for(const file of files)assert.ok(existsSync(join(process.cwd(),'public','mockups',device.slug,file)),`${device.slug}/${file} is missing`);
+ }
 });
