@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {constrainLayer,layerBounds,hitLayer,modelConfig,templateLayers,textLayer} from '../lib/customizer.ts';
+import {constrainLayer,initialCustomization,layerBounds,hitLayer,modelConfig,textLayer} from '../lib/customizer.ts';
 test('rotated artwork remains inside the print-safe area and outside the camera',()=>{
  for(const device of ['iphone-17','iphone-17-pro','iphone-17-pro-max','iphone-16-pro','iphone-15-plus']){
   const c=modelConfig(device);
@@ -21,12 +21,7 @@ test('hit testing respects rotations and front-to-back layer order',()=>{
  assert.equal(hitLayer([a,b],500,1180)?.id,'top');
  assert.equal(hitLayer([a,b],580,1100),undefined);
 });
-test('word cloud keeps supporting words apart from the brand footer',()=>{
- const layers=templateLayers('AYAZ','Word Cloud','#d31b27');
- assert.equal(layers.length,8);assert.equal(new Set(layers.map(l=>l.id)).size,8);
- assert.ok(layers.every(l=>l.y+l.height/2<1830));
- assert.equal(templateLayers('','Photo Collage','#fff').length,0);
-});
+test('the custom editor starts with a blank case',()=>{assert.equal(initialCustomization.layers.length,0);assert.equal(initialCustomization.name,'Custom artwork')});
 test('phone families use their matching 2.5D camera template',()=>{
  assert.equal(modelConfig('iphone-15').cameraLayout,'dual-diagonal');
  assert.equal(modelConfig('iphone-16').cameraLayout,'dual-vertical');

@@ -1,0 +1,1 @@
+export function designIdentity(design:{artifactId?:string;upload?:string;instructions?:string}|undefined){return design?design.artifactId||JSON.stringify([design.upload||'',design.instructions?.trim()||'']):''}
