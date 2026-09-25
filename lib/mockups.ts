@@ -8,8 +8,8 @@ const config=(slug:string,model:string,width:number,height:number,camera:Rect,ca
 
 export const modelConfigs:Record<string,ModelConfig>={
  'iphone-17':config('iphone-17','iPhone 17',2.81,5.89,{x:62,y:58,width:492,height:505},'triple-square',112),
- 'iphone-17-pro':config('iphone-17-pro','iPhone 17 Pro',2.84,5.91,{x:48,y:55,width:904,height:435},'triple-wide',108),
- 'iphone-17-pro-max':config('iphone-17-pro-max','iPhone 17 Pro Max',3.02,6.31,{x:46,y:52,width:908,height:438},'triple-wide',105),
+ 'iphone-17-pro':config('iphone-17-pro','iPhone 17 Pro',2.84,5.91,{x:60,y:56,width:500,height:515},'triple-square',108),
+ 'iphone-17-pro-max':config('iphone-17-pro-max','iPhone 17 Pro Max',3.02,6.31,{x:57,y:53,width:508,height:522},'triple-square',105),
  'iphone-16':config('iphone-16','iPhone 16',2.78,5.81,{x:70,y:62,width:270,height:505},'dual-vertical',114),
  'iphone-16-pro':config('iphone-16-pro','iPhone 16 Pro',2.81,5.89,{x:60,y:56,width:500,height:515},'triple-square',109),
  'iphone-16-pro-max':config('iphone-16-pro-max','iPhone 16 Pro Max',3.06,6.42,{x:57,y:53,width:508,height:522},'triple-square',104),
