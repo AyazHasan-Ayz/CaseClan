@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {existsSync} from 'node:fs';
+import {existsSync,readFileSync} from 'node:fs';
 import {join} from 'node:path';
 import {constrainLayer,initialCustomization,layerBounds,hitLayer,modelConfig,textLayer} from '../lib/customizer.ts';
 import {modelConfigs} from '../lib/mockups.ts';
@@ -31,6 +31,10 @@ test('phone models use their matching 2.5D camera geometry',()=>{
  assert.equal(modelConfig('iphone-16').cameraLayout,'dual-vertical');
  assert.equal(modelConfig('iphone-17').cameraLayout,'dual-vertical');
  assert.deepEqual(modelConfig('iphone-17').camera,{x:64,y:57,width:445,height:535});
+ const iphone17Asset=JSON.parse(readFileSync(join(process.cwd(),'public','mockups','iphone-17','config.json'),'utf8').replace(/^\uFEFF/,''));
+ assert.deepEqual(iphone17Asset.camera.lip,{x:96,y:73,width:302,height:530,radius:145});
+ assert.deepEqual(iphone17Asset.camera.flash,[.87,.522]);
+ assert.deepEqual(iphone17Asset.camera.sensor,[.865,.71]);
  assert.equal(modelConfig('iphone-16-pro-max').cameraLayout,'triple-square');
  assert.equal(modelConfig('iphone-17-pro').cameraLayout,'triple-wide');
  assert.equal(modelConfig('iphone-17-pro-max').cameraLayout,'triple-wide');

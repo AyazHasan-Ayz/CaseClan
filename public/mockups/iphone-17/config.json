@@ -29,22 +29,34 @@
                             "x":  0.064
                         },
     "camera":  {
-                   "flash":  [
-                                 0.87,
-                                 0.48
-                             ],
-                   "layout":  "dual-vertical",
                    "lenses":  [
                                   [
-                                      0.31,
-                                      0.27
+                                      0.403,
+                                      0.325
                                   ],
                                   [
-                                      0.31,
-                                      0.73
+                                      0.403,
+                                      0.716
                                   ]
                               ],
-                   "lidar":  null
+                   "lensRadius":  0.236,
+                   "lip":  {
+                               "y":  73,
+                               "radius":  145,
+                               "width":  302,
+                               "height":  530,
+                               "x":  96
+                           },
+                   "flash":  [
+                                 0.87,
+                                 0.522
+                             ],
+                   "lidar":  null,
+                   "layout":  "dual-vertical",
+                   "sensor":  [
+                                  0.865,
+                                  0.71
+                              ]
                },
     "scalingRules":  {
                          "maxLayerHeight":  1250,
