@@ -27,7 +27,9 @@ async function paint(canvas:HTMLCanvasElement,d:Customization,selected:string|un
  ctx.save();ctx.translate(cssW/2,cssH/2);ctx.rotate(f.angle);ctx.transform(1,0,f.skew,1,0,0);ctx.translate(-cssW/2,-cssH/2);
  ctx.shadowColor='rgba(20,24,28,.36)';ctx.shadowBlur=34;ctx.shadowOffsetX=view==='Left'?-13:13;ctx.shadowOffsetY=22;rounded(ctx,f.x-5,f.y-5,f.w+10,f.h+10,radius+8);ctx.fillStyle='rgba(187,198,204,.28)';ctx.fill();ctx.shadowColor='transparent';
  ctx.drawImage(layers.base,f.x,f.y,f.w,f.h);
- ctx.save();rounded(ctx,f.x,f.y,f.w,f.h,radius);ctx.clip();ctx.drawImage(art,f.x,f.y,f.w,f.h);ctx.restore();
+ ctx.save();rounded(ctx,f.x,f.y,f.w,f.h,radius);ctx.clip();
+ if(c.photorealistic){ctx.globalCompositeOperation='multiply';ctx.globalAlpha=.92}
+ ctx.drawImage(art,f.x,f.y,f.w,f.h);ctx.restore();
  ctx.drawImage(layers.shadow,f.x,f.y,f.w,f.h);
  ctx.drawImage(layers.caseOverlay,f.x,f.y,f.w,f.h);
  ctx.drawImage(layers.highlight,f.x,f.y,f.w,f.h);

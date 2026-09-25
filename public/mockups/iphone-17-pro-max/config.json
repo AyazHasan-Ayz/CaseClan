@@ -19,10 +19,10 @@
                      "top":  0.035
                  },
     "cameraExclusion":  {
-                            "y":  0.0265,
-                            "width":  0.508,
-                            "height":  0.261,
-                            "x":  0.057
+                            "y":  0.0385,
+                            "width":  0.487,
+                            "height":  0.2565,
+                            "x":  0.073
                         },
     "camera":  {
                    "flash":  [

@@ -3,7 +3,7 @@ Add-Type -AssemblyName System.Drawing
 $models = @(
   @{slug='iphone-17'; name='iPhone 17'; width=2.81; height=5.89; radius=112; layout='triple-square'; camera=@{x=62;y=58;width=492;height=505}; lenses=@(@(.31,.29),@(.69,.48),@(.31,.72)); flash=@(.78,.23); lidar=@(.78,.76)},
   @{slug='iphone-17-pro'; name='iPhone 17 Pro'; width=2.84; height=5.91; radius=108; layout='triple-square'; camera=@{x=60;y=56;width=500;height=515}; lenses=@(@(.31,.29),@(.69,.48),@(.31,.72)); flash=@(.78,.23); lidar=@(.78,.76)},
-  @{slug='iphone-17-pro-max'; name='iPhone 17 Pro Max'; width=3.02; height=6.31; radius=105; layout='triple-square'; camera=@{x=57;y=53;width=508;height=522}; lenses=@(@(.31,.29),@(.69,.48),@(.31,.72)); flash=@(.78,.23); lidar=@(.78,.76)},
+  @{slug='iphone-17-pro-max'; name='iPhone 17 Pro Max'; width=3.02; height=6.31; radius=105; layout='triple-square'; camera=@{x=73;y=77;width=487;height=513}; lenses=@(@(.31,.29),@(.69,.48),@(.31,.72)); flash=@(.78,.23); lidar=@(.78,.76); photoSource='assets/mockups/iphone-17-pro-max-source.png'},
   @{slug='iphone-16'; name='iPhone 16'; width=2.78; height=5.81; radius=114; layout='dual-vertical'; camera=@{x=70;y=62;width=270;height=505}; lenses=@(@(.5,.27),@(.5,.73)); flash=@(.87,.50); lidar=$null},
   @{slug='iphone-16-pro'; name='iPhone 16 Pro'; width=2.81; height=5.89; radius=109; layout='triple-square'; camera=@{x=60;y=56;width=500;height=515}; lenses=@(@(.31,.29),@(.69,.48),@(.31,.72)); flash=@(.78,.23); lidar=@(.78,.76)},
   @{slug='iphone-16-pro-max'; name='iPhone 16 Pro Max'; width=3.06; height=6.42; radius=104; layout='triple-square'; camera=@{x=57;y=53;width=508;height=522}; lenses=@(@(.31,.29),@(.69,.48),@(.31,.72)); flash=@(.78,.23); lidar=@(.78,.76)},
@@ -43,17 +43,25 @@ foreach($m in $models){
   $camera=Rounded-Path $cx $cy $cw $ch ([Math]::Min($cw,$ch)*.22)
 
   $bmp=New-Bitmap; $g=New-Graphics $bmp
-  $body=[System.Drawing.Drawing2D.LinearGradientBrush]::new([System.Drawing.Point]::new(75,24),[System.Drawing.Point]::new(925,1976),[System.Drawing.Color]::FromArgb(255,251,251,249),[System.Drawing.Color]::FromArgb(255,196,200,202)); $g.FillPath($body,$phone); $body.Dispose()
-  $g.DrawPath((New-Pen 220 91 99 104 6),$phone); $g.DrawPath((New-Pen 195 255 255 255 4),(Rounded-Path 81 30 838 1940 ($m.radius-6)))
-  $panel=[System.Drawing.Drawing2D.LinearGradientBrush]::new([System.Drawing.Point]::new(112,80),[System.Drawing.Point]::new(865,1910),[System.Drawing.Color]::FromArgb(155,255,255,255),[System.Drawing.Color]::FromArgb(80,220,223,224)); $g.FillPath($panel,(Rounded-Path 94 43 812 1914 ($m.radius-17))); $panel.Dispose()
-  $g.FillPath((New-Brush 78 0 0 0),(Rounded-Path ($cx-9) ($cy+10) ($cw+18) ($ch+18) ([Math]::Min($cw,$ch)*.23)))
-  $plate=[System.Drawing.Drawing2D.LinearGradientBrush]::new([System.Drawing.PointF]::new($cx,$cy),[System.Drawing.PointF]::new($cx+$cw,$cy+$ch),[System.Drawing.Color]::FromArgb(255,249,249,246),[System.Drawing.Color]::FromArgb(255,174,178,181)); $g.FillPath($plate,$camera); $plate.Dispose()
-  $g.DrawPath((New-Pen 255 24 27 29 13),$camera); $g.DrawPath((New-Pen 230 250 250 247 4),(Rounded-Path ($cx+10) ($cy+10) ($cw-20) ($ch-20) ([Math]::Min($cw,$ch)*.18)))
-  $lensR=[Math]::Min($cw,$ch) * ($(if($m.layout -eq 'triple-wide'){.205}elseif($m.layout -eq 'dual-vertical'){.285}else{.205}))
-  foreach($pt in $m.lenses){Draw-Lens $g ($cx+$cw*$pt[0]) ($cy+$ch*$pt[1]) $lensR}
-  if($m.flash){$fx=$cx+$cw*$m.flash[0];$fy=$cy+$ch*$m.flash[1];Draw-Flash $g $fx $fy ($(if($m.layout -eq 'dual-vertical'){17}else{24}))}
-  if($m.lidar){$lx=$cx+$cw*$m.lidar[0];$ly=$cy+$ch*$m.lidar[1];$g.FillEllipse((New-Brush 255 10 12 15),$lx-23,$ly-23,46,46);$g.DrawEllipse((New-Pen 210 105 109 112 4),$lx-23,$ly-23,46,46)}
-  $micX=$cx+$cw*$(if($m.layout -eq 'dual-vertical'){.83}else{.78});$micY=$cy+$ch*$(if($m.layout -eq 'dual-vertical'){.63}else{.50});$g.FillEllipse((New-Brush 255 31 34 36),$micX-8,$micY-8,16,16)
+  if($m.photoSource -and (Test-Path -LiteralPath $m.photoSource)){
+    $source=[System.Drawing.Bitmap]::new($m.photoSource)
+    $dest=[System.Drawing.Rectangle]::new(42,24,916,1952)
+    $crop=[System.Drawing.Rectangle]::new(176,74,671,1373)
+    $g.DrawImage($source,$dest,$crop,[System.Drawing.GraphicsUnit]::Pixel)
+    $source.Dispose()
+  } else {
+    $body=[System.Drawing.Drawing2D.LinearGradientBrush]::new([System.Drawing.Point]::new(75,24),[System.Drawing.Point]::new(925,1976),[System.Drawing.Color]::FromArgb(255,251,251,249),[System.Drawing.Color]::FromArgb(255,196,200,202)); $g.FillPath($body,$phone); $body.Dispose()
+    $g.DrawPath((New-Pen 220 91 99 104 6),$phone); $g.DrawPath((New-Pen 195 255 255 255 4),(Rounded-Path 81 30 838 1940 ($m.radius-6)))
+    $panel=[System.Drawing.Drawing2D.LinearGradientBrush]::new([System.Drawing.Point]::new(112,80),[System.Drawing.Point]::new(865,1910),[System.Drawing.Color]::FromArgb(155,255,255,255),[System.Drawing.Color]::FromArgb(80,220,223,224)); $g.FillPath($panel,(Rounded-Path 94 43 812 1914 ($m.radius-17))); $panel.Dispose()
+    $g.FillPath((New-Brush 78 0 0 0),(Rounded-Path ($cx-9) ($cy+10) ($cw+18) ($ch+18) ([Math]::Min($cw,$ch)*.23)))
+    $plate=[System.Drawing.Drawing2D.LinearGradientBrush]::new([System.Drawing.PointF]::new($cx,$cy),[System.Drawing.PointF]::new($cx+$cw,$cy+$ch),[System.Drawing.Color]::FromArgb(255,249,249,246),[System.Drawing.Color]::FromArgb(255,174,178,181)); $g.FillPath($plate,$camera); $plate.Dispose()
+    $g.DrawPath((New-Pen 255 24 27 29 13),$camera); $g.DrawPath((New-Pen 230 250 250 247 4),(Rounded-Path ($cx+10) ($cy+10) ($cw-20) ($ch-20) ([Math]::Min($cw,$ch)*.18)))
+    $lensR=[Math]::Min($cw,$ch) * ($(if($m.layout -eq 'triple-wide'){.205}elseif($m.layout -eq 'dual-vertical'){.285}else{.205}))
+    foreach($pt in $m.lenses){Draw-Lens $g ($cx+$cw*$pt[0]) ($cy+$ch*$pt[1]) $lensR}
+    if($m.flash){$fx=$cx+$cw*$m.flash[0];$fy=$cy+$ch*$m.flash[1];Draw-Flash $g $fx $fy ($(if($m.layout -eq 'dual-vertical'){17}else{24}))}
+    if($m.lidar){$lx=$cx+$cw*$m.lidar[0];$ly=$cy+$ch*$m.lidar[1];$g.FillEllipse((New-Brush 255 10 12 15),$lx-23,$ly-23,46,46);$g.DrawEllipse((New-Pen 210 105 109 112 4),$lx-23,$ly-23,46,46)}
+    $micX=$cx+$cw*$(if($m.layout -eq 'dual-vertical'){.83}else{.78});$micY=$cy+$ch*$(if($m.layout -eq 'dual-vertical'){.63}else{.50});$g.FillEllipse((New-Brush 255 31 34 36),$micX-8,$micY-8,16,16)
+  }
   $g.Dispose(); Save-Layer $bmp (Join-Path $dir 'base.png')
 
   $bmp=New-Bitmap; $g=New-Graphics $bmp; $outer=Rounded-Path 42 0 916 2000 ($m.radius+38); $middle=Rounded-Path 57 10 886 1980 ($m.radius+23); $inner=Rounded-Path 82 30 836 1940 ($m.radius-2); $shell=[System.Drawing.Drawing2D.GraphicsPath]::new([System.Drawing.Drawing2D.FillMode]::Alternate); $shell.AddPath($outer,$false);$shell.AddPath($inner,$false)

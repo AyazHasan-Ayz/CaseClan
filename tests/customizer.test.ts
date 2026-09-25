@@ -35,7 +35,8 @@ test('phone models use their matching 2.5D camera geometry',()=>{
  assert.equal(modelConfig('iphone-17-pro').cameraLayout,'triple-square');
  assert.equal(modelConfig('iphone-17-pro-max').cameraLayout,'triple-square');
  assert.deepEqual(modelConfig('iphone-17-pro').camera,{x:60,y:56,width:500,height:515});
- assert.deepEqual(modelConfig('iphone-17-pro-max').camera,{x:57,y:53,width:508,height:522});
+ assert.deepEqual(modelConfig('iphone-17-pro-max').camera,{x:73,y:77,width:487,height:513});
+ assert.equal(modelConfig('iphone-17-pro-max').photorealistic,true);
 });
 test('every supported phone owns a complete layered mockup bundle',()=>{
  const files=['base.png','case-overlay.png','print-mask.png','camera-mask.png','highlight-overlay.png','shadow-overlay.png','config.json'];
