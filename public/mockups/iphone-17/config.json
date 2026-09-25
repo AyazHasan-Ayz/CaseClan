@@ -1,66 +1,66 @@
-﻿{
-    "model":  "iPhone 17",
-    "slug":  "iphone-17",
-    "aspectRatio":  0.47708,
-    "physicalSize":  {
-                         "height":  5.89,
-                         "width":  2.81
-                     },
-    "printArea":  {
-                      "y":  0.012,
-                      "width":  0.85,
-                      "height":  0.976,
-                      "x":  0.075
-                  },
-    "safeArea":  {
-                     "left":  0.055,
-                     "right":  0.055,
-                     "bottom":  0.045,
-                     "top":  0.035
-                 },
-    "cameraExclusion":  {
-                            "y":  0.029,
-                            "width":  0.285,
-                            "height":  0.26,
-                            "x":  0.066
-                        },
-    "camera":  {
-                   "flash":  [
-                                 0.84,
-                                 0.5
-                             ],
-                   "layout":  "dual-vertical",
-                   "lenses":  [
-                                  [
-                                      0.5,
-                                      0.27
-                                  ],
-                                  [
-                                      0.5,
-                                      0.73
-                                  ]
-                              ],
-                   "lidar":  null
-               },
-    "scalingRules":  {
-                         "maxLayerHeight":  1250,
-                         "canvasWidth":  1000,
-                         "canvasHeight":  2000,
-                         "minLayerSize":  60,
-                         "maxLayerWidth":  870
-                     },
-    "previewCrop":  {
-                        "y":  0,
-                        "width":  0.9,
-                        "height":  1,
-                        "x":  0.05
-                    },
-    "assets":  {
-                   "base":  "base.png",
-                   "shadowOverlay":  "shadow-overlay.png",
-                   "cameraMask":  "camera-mask.png",
-                   "printMask":  "print-mask.png",
-                   "highlightOverlay":  "highlight-overlay.png",
-                   "caseOverlay":  "case-overlay.png"
-               }
+{
+  "model": "iPhone 17",
+  "slug": "iphone-17",
+  "aspectRatio": 0.47708,
+  "physicalSize": {
+    "width": 2.81,
+    "height": 5.89
+  },
+  "printArea": {
+    "width": 0.85,
+    "height": 0.976,
+    "y": 0.012,
+    "x": 0.075
+  },
+  "safeArea": {
+    "top": 0.035,
+    "left": 0.055,
+    "bottom": 0.045,
+    "right": 0.055
+  },
+  "cameraExclusion": {
+    "width": 0.285,
+    "height": 0.26,
+    "y": 0.029,
+    "x": 0.066
+  },
+  "camera": {
+    "layout": "dual-vertical",
+    "lenses": [
+      [
+        0.5,
+        0.27
+      ],
+      [
+        0.5,
+        0.73
+      ]
+    ],
+    "flash": [
+      0.84,
+      0.5
+    ],
+    "lidar": null
+  },
+  "scalingRules": {
+    "canvasHeight": 2000,
+    "minLayerSize": 60,
+    "maxLayerHeight": 1250,
+    "maxLayerWidth": 870,
+    "canvasWidth": 1000
+  },
+  "previewCrop": {
+    "width": 0.9,
+    "height": 1,
+    "y": 0,
+    "x": 0.05
+  },
+  "assets": {
+    "cameraMask": "camera-mask.png",
+    "base": "base.png",
+    "shadowOverlay": "shadow-overlay.png",
+    "printMask": "print-mask.png",
+    "caseOverlay": "case-overlay.png",
+    "highlightOverlay": "highlight-overlay.png"
+  }
 }

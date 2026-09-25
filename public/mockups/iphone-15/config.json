@@ -1,66 +1,66 @@
-﻿{
-    "model":  "iPhone 15",
-    "slug":  "iphone-15",
-    "aspectRatio":  0.48537,
-    "physicalSize":  {
-                         "height":  5.81,
-                         "width":  2.82
-                     },
-    "printArea":  {
-                      "y":  0.012,
-                      "width":  0.85,
-                      "height":  0.976,
-                      "x":  0.075
-                  },
-    "safeArea":  {
-                     "left":  0.055,
-                     "right":  0.055,
-                     "bottom":  0.045,
-                     "top":  0.035
-                 },
-    "cameraExclusion":  {
-                            "y":  0.03,
-                            "width":  0.405,
-                            "height":  0.215,
-                            "x":  0.068
-                        },
-    "camera":  {
-                   "flash":  [
-                                 0.76,
-                                 0.22
-                             ],
-                   "layout":  "dual-diagonal",
-                   "lenses":  [
-                                  [
-                                      0.31,
-                                      0.31
-                                  ],
-                                  [
-                                      0.69,
-                                      0.69
-                                  ]
-                              ],
-                   "lidar":  null
-               },
-    "scalingRules":  {
-                         "maxLayerHeight":  1250,
-                         "canvasWidth":  1000,
-                         "canvasHeight":  2000,
-                         "minLayerSize":  60,
-                         "maxLayerWidth":  870
-                     },
-    "previewCrop":  {
-                        "y":  0,
-                        "width":  0.9,
-                        "height":  1,
-                        "x":  0.05
-                    },
-    "assets":  {
-                   "base":  "base.png",
-                   "shadowOverlay":  "shadow-overlay.png",
-                   "cameraMask":  "camera-mask.png",
-                   "printMask":  "print-mask.png",
-                   "highlightOverlay":  "highlight-overlay.png",
-                   "caseOverlay":  "case-overlay.png"
-               }
+{
+  "model": "iPhone 15",
+  "slug": "iphone-15",
+  "aspectRatio": 0.48537,
+  "physicalSize": {
+    "width": 2.82,
+    "height": 5.81
+  },
+  "printArea": {
+    "width": 0.85,
+    "height": 0.976,
+    "y": 0.012,
+    "x": 0.075
+  },
+  "safeArea": {
+    "top": 0.035,
+    "left": 0.055,
+    "bottom": 0.045,
+    "right": 0.055
+  },
+  "cameraExclusion": {
+    "width": 0.405,
+    "height": 0.215,
+    "y": 0.03,
+    "x": 0.068
+  },
+  "camera": {
+    "layout": "dual-diagonal",
+    "lenses": [
+      [
+        0.31,
+        0.31
+      ],
+      [
+        0.69,
+        0.69
+      ]
+    ],
+    "flash": [
+      0.76,
+      0.22
+    ],
+    "lidar": null
+  },
+  "scalingRules": {
+    "canvasHeight": 2000,
+    "minLayerSize": 60,
+    "maxLayerHeight": 1250,
+    "maxLayerWidth": 870,
+    "canvasWidth": 1000
+  },
+  "previewCrop": {
+    "width": 0.9,
+    "height": 1,
+    "y": 0,
+    "x": 0.05
+  },
+  "assets": {
+    "cameraMask": "camera-mask.png",
+    "base": "base.png",
+    "shadowOverlay": "shadow-overlay.png",
+    "printMask": "print-mask.png",
+    "caseOverlay": "case-overlay.png",
+    "highlightOverlay": "highlight-overlay.png"
+  }
 }

@@ -22,6 +22,7 @@ async function paint(canvas:HTMLCanvasElement,d:Customization,selected:string|un
  const [art,layers]=await Promise.all([renderArtwork(d,1000,guides,selected),loadMockup(d.device)]),f=layout({width:cssW,height:cssH},d,view),c=modelConfig(d.device),radius=c.cornerRadius*f.w/1000;
  const bg=ctx.createLinearGradient(0,0,0,cssH);bg.addColorStop(0,'#f4f3f1');bg.addColorStop(.67,'#dedcd8');bg.addColorStop(.68,'#d0ceca');bg.addColorStop(1,'#e8e6e2');ctx.fillStyle=bg;ctx.fillRect(0,0,cssW,cssH);
  const halo=ctx.createRadialGradient(cssW*.39,cssH*.25,5,cssW*.47,cssH*.42,cssW*.58);halo.addColorStop(0,'rgba(255,255,255,.98)');halo.addColorStop(.56,'rgba(255,255,255,.24)');halo.addColorStop(1,'rgba(255,255,255,0)');ctx.fillStyle=halo;ctx.fillRect(0,0,cssW,cssH);
+ ctx.save();ctx.filter='blur(28px)';ctx.fillStyle='rgba(32,37,40,.13)';ctx.beginPath();ctx.ellipse(f.x-f.w*.03,f.y+f.h*.39,f.w*.36,f.h*.29,-.08,0,Math.PI*2);ctx.fill();ctx.restore();
  ctx.save();ctx.filter='blur(20px)';ctx.fillStyle='rgba(18,22,25,.30)';ctx.beginPath();ctx.ellipse(cssW*.51,f.y+f.h+24,f.w*.72,19,-.03,0,Math.PI*2);ctx.fill();ctx.restore();
  ctx.save();ctx.translate(cssW/2,cssH/2);ctx.rotate(f.angle);ctx.transform(1,0,f.skew,1,0,0);ctx.translate(-cssW/2,-cssH/2);
  ctx.shadowColor='rgba(20,24,28,.36)';ctx.shadowBlur=34;ctx.shadowOffsetX=view==='Left'?-13:13;ctx.shadowOffsetY=22;rounded(ctx,f.x-5,f.y-5,f.w+10,f.h+10,radius+8);ctx.fillStyle='rgba(187,198,204,.28)';ctx.fill();ctx.shadowColor='transparent';
