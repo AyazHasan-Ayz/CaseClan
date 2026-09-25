@@ -7,7 +7,7 @@ const assets=(slug:string):MockupAssets=>({base:`/mockups/${slug}/base.png`,case
 const config=(slug:string,model:string,width:number,height:number,camera:Rect,cameraLayout:CameraLayout,cornerRadius:number):ModelConfig=>({slug,model,width,height,camera,cameraLayout,cornerRadius,safe:70,printArea:{x:.075,y:.012,width:.85,height:.976},safeArea:{top:.035,right:.055,bottom:.045,left:.055},previewCrop:{x:.05,y:0,width:.9,height:1},assets:assets(slug)});
 
 export const modelConfigs:Record<string,ModelConfig>={
- 'iphone-17':config('iphone-17','iPhone 17',2.81,5.89,{x:66,y:58,width:285,height:520},'dual-vertical',112),
+ 'iphone-17':config('iphone-17','iPhone 17',2.81,5.89,{x:62,y:58,width:492,height:505},'triple-square',112),
  'iphone-17-pro':config('iphone-17-pro','iPhone 17 Pro',2.84,5.91,{x:48,y:55,width:904,height:435},'triple-wide',108),
  'iphone-17-pro-max':config('iphone-17-pro-max','iPhone 17 Pro Max',3.02,6.31,{x:46,y:52,width:908,height:438},'triple-wide',105),
  'iphone-16':config('iphone-16','iPhone 16',2.78,5.81,{x:70,y:62,width:270,height:505},'dual-vertical',114),

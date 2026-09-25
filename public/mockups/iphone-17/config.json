@@ -3,64 +3,71 @@
   "slug": "iphone-17",
   "aspectRatio": 0.47708,
   "physicalSize": {
-    "width": 2.81,
-    "height": 5.89
+    "height": 5.89,
+    "width": 2.81
   },
   "printArea": {
-    "width": 0.85,
-    "height": 0.976,
     "y": 0.012,
-    "x": 0.075
+    "x": 0.075,
+    "width": 0.85,
+    "height": 0.976
   },
   "safeArea": {
-    "top": 0.035,
-    "left": 0.055,
+    "right": 0.055,
     "bottom": 0.045,
-    "right": 0.055
+    "top": 0.035,
+    "left": 0.055
   },
   "cameraExclusion": {
-    "width": 0.285,
-    "height": 0.26,
     "y": 0.029,
-    "x": 0.066
+    "x": 0.062,
+    "width": 0.492,
+    "height": 0.2525
   },
   "camera": {
-    "layout": "dual-vertical",
     "lenses": [
       [
-        0.5,
-        0.27
+        0.31,
+        0.29
       ],
       [
-        0.5,
-        0.73
+        0.69,
+        0.48
+      ],
+      [
+        0.31,
+        0.72
       ]
     ],
-    "flash": [
-      0.84,
-      0.5
+    "lidar": [
+      0.78,
+      0.76
     ],
-    "lidar": null
+    "layout": "triple-square",
+    "flash": [
+      0.78,
+      0.23
+    ]
   },
   "scalingRules": {
-    "canvasHeight": 2000,
-    "minLayerSize": 60,
-    "maxLayerHeight": 1250,
     "maxLayerWidth": 870,
-    "canvasWidth": 1000
+    "canvasWidth": 1000,
+    "maxLayerHeight": 1250,
+    "minLayerSize": 60,
+    "canvasHeight": 2000
   },
   "previewCrop": {
-    "width": 0.9,
-    "height": 1,
     "y": 0,
-    "x": 0.05
+    "x": 0.05,
+    "width": 0.9,
+    "height": 1
   },
   "assets": {
-    "cameraMask": "camera-mask.png",
     "base": "base.png",
-    "shadowOverlay": "shadow-overlay.png",
     "printMask": "print-mask.png",
+    "highlightOverlay": "highlight-overlay.png",
     "caseOverlay": "case-overlay.png",
-    "highlightOverlay": "highlight-overlay.png"
+    "cameraMask": "camera-mask.png",
+    "shadowOverlay": "shadow-overlay.png"
   }
 }
