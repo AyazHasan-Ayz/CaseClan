@@ -1,73 +1,81 @@
-{
-  "model": "iPhone 15 Pro Max",
-  "slug": "iphone-15-pro-max",
-  "aspectRatio": 0.48013,
-  "physicalSize": {
-    "width": 3.02,
-    "height": 6.29
-  },
-  "printArea": {
-    "width": 0.85,
-    "height": 0.976,
-    "y": 0.012,
-    "x": 0.075
-  },
-  "safeArea": {
-    "top": 0.035,
-    "left": 0.055,
-    "bottom": 0.045,
-    "right": 0.055
-  },
-  "cameraExclusion": {
-    "width": 0.5,
-    "height": 0.256,
-    "y": 0.0275,
-    "x": 0.059
-  },
-  "camera": {
-    "layout": "triple-square",
-    "lenses": [
-      [
-        0.31,
-        0.29
-      ],
-      [
-        0.69,
-        0.48
-      ],
-      [
-        0.31,
-        0.72
-      ]
-    ],
-    "flash": [
-      0.78,
-      0.23
-    ],
-    "lidar": [
-      0.78,
-      0.76
-    ]
-  },
-  "scalingRules": {
-    "canvasHeight": 2000,
-    "minLayerSize": 60,
-    "maxLayerHeight": 1250,
-    "maxLayerWidth": 870,
-    "canvasWidth": 1000
-  },
-  "previewCrop": {
-    "width": 0.9,
-    "height": 1,
-    "y": 0,
-    "x": 0.05
-  },
-  "assets": {
-    "cameraMask": "camera-mask.png",
-    "base": "base.png",
-    "shadowOverlay": "shadow-overlay.png",
-    "printMask": "print-mask.png",
-    "caseOverlay": "case-overlay.png",
-    "highlightOverlay": "highlight-overlay.png"
-  }
+﻿{
+    "id":  "iphone-15-pro-max",
+    "displayName":  "iPhone 15 Pro Max",
+    "family":  "iPhone 15",
+    "model":  "iPhone 15 Pro Max",
+    "slug":  "iphone-15-pro-max",
+    "photorealistic":  true,
+    "aspectRatio":  0.48013,
+    "physicalSize":  {
+                         "height":  6.29,
+                         "width":  3.02
+                     },
+    "printArea":  {
+                      "y":  0.012,
+                      "width":  0.85,
+                      "height":  0.976,
+                      "x":  0.075
+                  },
+    "safeArea":  {
+                     "left":  0.055,
+                     "right":  0.055,
+                     "bottom":  0.045,
+                     "top":  0.035
+                 },
+    "cameraExclusion":  {
+                            "y":  0.0385,
+                            "width":  0.479,
+                            "height":  0.2435,
+                            "x":  0.086
+                        },
+    "camera":  {
+                   "flash":  [
+                                 0.78,
+                                 0.23
+                             ],
+                   "layout":  "triple-square",
+                   "lenses":  [
+                                  [
+                                      0.31,
+                                      0.29
+                                  ],
+                                  [
+                                      0.69,
+                                      0.48
+                                  ],
+                                  [
+                                      0.31,
+                                      0.72
+                                  ]
+                              ],
+                   "lidar":  [
+                                 0.78,
+                                 0.76
+                             ]
+               },
+    "scalingRules":  {
+                         "maxLayerHeight":  1250,
+                         "canvasWidth":  1000,
+                         "canvasHeight":  2000,
+                         "minLayerSize":  60,
+                         "maxLayerWidth":  870
+                     },
+    "previewCrop":  {
+                        "y":  0,
+                        "width":  0.9,
+                        "height":  1,
+                        "x":  0.05
+                    },
+    "baseImage":  "/mockups/iphone-15-pro-max/base.png",
+    "maskImage":  "/mockups/iphone-15-pro-max/print-mask.png",
+    "overlayImage":  "/mockups/iphone-15-pro-max/case-overlay.png",
+    "shadowImage":  "/mockups/iphone-15-pro-max/shadow-overlay.png",
+    "assets":  {
+                   "base":  "base.png",
+                   "shadowOverlay":  "shadow-overlay.png",
+                   "cameraMask":  "camera-mask.png",
+                   "printMask":  "print-mask.png",
+                   "highlightOverlay":  "highlight-overlay.png",
+                   "caseOverlay":  "case-overlay.png"
+               }
 }

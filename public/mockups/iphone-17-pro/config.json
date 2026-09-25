@@ -1,6 +1,10 @@
 ﻿{
+    "id":  "iphone-17-pro",
+    "displayName":  "iPhone 17 Pro",
+    "family":  "iPhone 17",
     "model":  "iPhone 17 Pro",
     "slug":  "iphone-17-pro",
+    "photorealistic":  true,
     "aspectRatio":  0.48054,
     "physicalSize":  {
                          "height":  5.91,
@@ -19,34 +23,34 @@
                      "top":  0.035
                  },
     "cameraExclusion":  {
-                            "y":  0.028,
-                            "width":  0.5,
-                            "height":  0.2575,
-                            "x":  0.06
+                            "y":  0.044,
+                            "width":  0.866,
+                            "height":  0.2665,
+                            "x":  0.078
                         },
     "camera":  {
                    "flash":  [
-                                 0.78,
-                                 0.23
+                                 0.82,
+                                 0.24
                              ],
-                   "layout":  "triple-square",
+                   "layout":  "triple-wide",
                    "lenses":  [
                                   [
-                                      0.31,
-                                      0.29
+                                      0.18,
+                                      0.3
                                   ],
                                   [
-                                      0.69,
+                                      0.5,
                                       0.48
                                   ],
                                   [
-                                      0.31,
-                                      0.72
+                                      0.18,
+                                      0.7
                                   ]
                               ],
                    "lidar":  [
-                                 0.78,
-                                 0.76
+                                 0.82,
+                                 0.72
                              ]
                },
     "scalingRules":  {
@@ -62,6 +66,10 @@
                         "height":  1,
                         "x":  0.05
                     },
+    "baseImage":  "/mockups/iphone-17-pro/base.png",
+    "maskImage":  "/mockups/iphone-17-pro/print-mask.png",
+    "overlayImage":  "/mockups/iphone-17-pro/case-overlay.png",
+    "shadowImage":  "/mockups/iphone-17-pro/shadow-overlay.png",
     "assets":  {
                    "base":  "base.png",
                    "shadowOverlay":  "shadow-overlay.png",

@@ -1,16 +1,17 @@
 Add-Type -AssemblyName System.Drawing
 
 $models = @(
-  @{slug='iphone-17'; name='iPhone 17'; width=2.81; height=5.89; radius=112; layout='triple-square'; camera=@{x=62;y=58;width=492;height=505}; lenses=@(@(.31,.29),@(.69,.48),@(.31,.72)); flash=@(.78,.23); lidar=@(.78,.76)},
-  @{slug='iphone-17-pro'; name='iPhone 17 Pro'; width=2.84; height=5.91; radius=108; layout='triple-square'; camera=@{x=60;y=56;width=500;height=515}; lenses=@(@(.31,.29),@(.69,.48),@(.31,.72)); flash=@(.78,.23); lidar=@(.78,.76)},
-  @{slug='iphone-17-pro-max'; name='iPhone 17 Pro Max'; width=3.02; height=6.31; radius=105; layout='triple-square'; camera=@{x=73;y=77;width=487;height=513}; lenses=@(@(.31,.29),@(.69,.48),@(.31,.72)); flash=@(.78,.23); lidar=@(.78,.76); photoSource='assets/mockups/iphone-17-pro-max-source.png'},
-  @{slug='iphone-16'; name='iPhone 16'; width=2.78; height=5.81; radius=114; layout='dual-vertical'; camera=@{x=70;y=62;width=270;height=505}; lenses=@(@(.5,.27),@(.5,.73)); flash=@(.87,.50); lidar=$null},
-  @{slug='iphone-16-pro'; name='iPhone 16 Pro'; width=2.81; height=5.89; radius=109; layout='triple-square'; camera=@{x=60;y=56;width=500;height=515}; lenses=@(@(.31,.29),@(.69,.48),@(.31,.72)); flash=@(.78,.23); lidar=@(.78,.76)},
-  @{slug='iphone-16-pro-max'; name='iPhone 16 Pro Max'; width=3.06; height=6.42; radius=104; layout='triple-square'; camera=@{x=57;y=53;width=508;height=522}; lenses=@(@(.31,.29),@(.69,.48),@(.31,.72)); flash=@(.78,.23); lidar=@(.78,.76)},
-  @{slug='iphone-15'; name='iPhone 15'; width=2.82; height=5.81; radius=116; layout='dual-diagonal'; camera=@{x=68;y=60;width=405;height=430}; lenses=@(@(.31,.31),@(.69,.69)); flash=@(.76,.22); lidar=$null},
-  @{slug='iphone-15-pro'; name='iPhone 15 Pro'; width=2.78; height=5.77; radius=112; layout='triple-square'; camera=@{x=62;y=58;width=492;height=505}; lenses=@(@(.31,.29),@(.69,.48),@(.31,.72)); flash=@(.78,.23); lidar=@(.78,.76)},
-  @{slug='iphone-15-pro-max'; name='iPhone 15 Pro Max'; width=3.02; height=6.29; radius=106; layout='triple-square'; camera=@{x=59;y=55;width=500;height=512}; lenses=@(@(.31,.29),@(.69,.48),@(.31,.72)); flash=@(.78,.23); lidar=@(.78,.76)},
-  @{slug='iphone-15-plus'; name='iPhone 15 Plus'; width=3.06; height=6.33; radius=108; layout='dual-diagonal'; camera=@{x=65;y=57;width=410;height=435}; lenses=@(@(.31,.31),@(.69,.69)); flash=@(.76,.22); lidar=$null}
+  @{slug='iphone-17'; name='iPhone 17'; family='iPhone 17'; width=2.81; height=5.89; radius=112; layout='single-wide'; camera=@{x=76;y=71;width=866;height=327}; lenses=@(@(.12,.42)); flash=@(.82,.42); lidar=$null; photoSource='assets/mockups/iphone-17-source.png'; crop=@(333,232,460,960)},
+  @{slug='iphone-17-pro'; name='iPhone 17 Pro'; family='iPhone 17'; width=2.84; height=5.91; radius=108; layout='triple-wide'; camera=@{x=78;y=88;width=866;height=533}; lenses=@(@(.18,.30),@(.50,.48),@(.18,.70)); flash=@(.82,.24); lidar=@(.82,.72); photoSource='assets/mockups/iphone-17-pro-source.png'; crop=@(332,214,460,975)},
+  @{slug='iphone-17-pro-max'; name='iPhone 17 Pro Max'; family='iPhone 17'; width=3.02; height=6.31; radius=105; layout='triple-wide'; camera=@{x=68;y=73;width=854;height=582}; lenses=@(@(.18,.28),@(.48,.47),@(.18,.69)); flash=@(.84,.22); lidar=@(.84,.67); photoSource='assets/mockups/iphone-17-pro-max-source.png'; crop=@(315,168,500,1045)},
+  @{slug='iphone-16'; name='iPhone 16'; family='iPhone 16'; width=2.78; height=5.81; radius=114; layout='dual-vertical'; camera=@{x=78;y=74;width=286;height=489}; lenses=@(@(.5,.27),@(.5,.73)); flash=@(.87,.50); lidar=$null; photoSource='assets/mockups/iphone-16-source.png'; crop=@(335,232,480,970)},
+  @{slug='iphone-16-plus'; name='iPhone 16 Plus'; family='iPhone 16'; width=3.06; height=6.33; radius=108; layout='dual-vertical'; camera=@{x=78;y=74;width=286;height=489}; lenses=@(@(.5,.27),@(.5,.73)); flash=@(.87,.50); lidar=$null; photoSource='assets/mockups/iphone-16-source.png'; crop=@(335,232,480,970)},
+  @{slug='iphone-16-pro'; name='iPhone 16 Pro'; family='iPhone 16'; width=2.81; height=5.89; radius=109; layout='triple-square'; camera=@{x=72;y=83;width=503;height=484}; lenses=@(@(.31,.29),@(.69,.48),@(.31,.72)); flash=@(.78,.23); lidar=@(.78,.76); photoSource='assets/mockups/iphone-16-pro-source.png'; crop=@(340,230,455,960)},
+  @{slug='iphone-16-pro-max'; name='iPhone 16 Pro Max'; family='iPhone 16'; width=3.06; height=6.42; radius=104; layout='triple-square'; camera=@{x=80;y=80;width=458;height=484}; lenses=@(@(.31,.29),@(.69,.48),@(.31,.72)); flash=@(.78,.23); lidar=@(.78,.76); photoSource='assets/mockups/iphone-16-pro-max-source.png'; crop=@(330,176,480,1015)},
+  @{slug='iphone-15'; name='iPhone 15'; family='iPhone 15'; width=2.82; height=5.81; radius=116; layout='dual-diagonal'; camera=@{x=74;y=73;width=445;height=448}; lenses=@(@(.31,.31),@(.69,.69)); flash=@(.76,.22); lidar=$null; photoSource='assets/mockups/iphone-15-source.png'; crop=@(335,232,480,990)},
+  @{slug='iphone-15-pro'; name='iPhone 15 Pro'; family='iPhone 15'; width=2.78; height=5.77; radius=112; layout='triple-square'; camera=@{x=74;y=75;width=493;height=488}; lenses=@(@(.31,.29),@(.69,.48),@(.31,.72)); flash=@(.78,.23); lidar=@(.78,.76); photoSource='assets/mockups/iphone-15-pro-source.png'; crop=@(337,232,465,960)},
+  @{slug='iphone-15-pro-max'; name='iPhone 15 Pro Max'; family='iPhone 15'; width=3.02; height=6.29; radius=106; layout='triple-square'; camera=@{x=86;y=77;width=479;height=487}; lenses=@(@(.31,.29),@(.69,.48),@(.31,.72)); flash=@(.78,.23); lidar=@(.78,.76); photoSource='assets/mockups/iphone-15-pro-max-source.png'; crop=@(330,160,480,1035)},
+  @{slug='iphone-15-plus'; name='iPhone 15 Plus'; family='iPhone 15'; width=3.06; height=6.33; radius=108; layout='dual-diagonal'; camera=@{x=86;y=67;width=437;height=473}; lenses=@(@(.31,.31),@(.69,.69)); flash=@(.76,.22); lidar=$null; photoSource='assets/mockups/iphone-15-plus-source.png'; crop=@(333,154,480,1045)}
 )
 
 function New-Bitmap { [System.Drawing.Bitmap]::new(1000,2000,[System.Drawing.Imaging.PixelFormat]::Format32bppArgb) }
@@ -46,8 +47,12 @@ foreach($m in $models){
   if($m.photoSource -and (Test-Path -LiteralPath $m.photoSource)){
     $source=[System.Drawing.Bitmap]::new($m.photoSource)
     $dest=[System.Drawing.Rectangle]::new(42,24,916,1952)
-    $crop=[System.Drawing.Rectangle]::new(176,74,671,1373)
+    $crop=[System.Drawing.Rectangle]::new($m.crop[0],$m.crop[1],$m.crop[2],$m.crop[3])
+    $photoClip=Rounded-Path 42 24 916 1952 ($m.radius+38)
+    $g.SetClip($photoClip)
     $g.DrawImage($source,$dest,$crop,[System.Drawing.GraphicsUnit]::Pixel)
+    $g.ResetClip()
+    $photoClip.Dispose()
     $source.Dispose()
   } else {
     $body=[System.Drawing.Drawing2D.LinearGradientBrush]::new([System.Drawing.Point]::new(75,24),[System.Drawing.Point]::new(925,1976),[System.Drawing.Color]::FromArgb(255,251,251,249),[System.Drawing.Color]::FromArgb(255,196,200,202)); $g.FillPath($body,$phone); $body.Dispose()
@@ -65,20 +70,27 @@ foreach($m in $models){
   $g.Dispose(); Save-Layer $bmp (Join-Path $dir 'base.png')
 
   $bmp=New-Bitmap; $g=New-Graphics $bmp; $outer=Rounded-Path 42 0 916 2000 ($m.radius+38); $middle=Rounded-Path 57 10 886 1980 ($m.radius+23); $inner=Rounded-Path 82 30 836 1940 ($m.radius-2); $shell=[System.Drawing.Drawing2D.GraphicsPath]::new([System.Drawing.Drawing2D.FillMode]::Alternate); $shell.AddPath($outer,$false);$shell.AddPath($inner,$false)
-  $rim=[System.Drawing.Drawing2D.LinearGradientBrush]::new([System.Drawing.Point]::new(42,0),[System.Drawing.Point]::new(958,2000),[System.Drawing.Color]::FromArgb(145,251,255,255),[System.Drawing.Color]::FromArgb(88,143,167,177));$g.FillPath($rim,$shell);$rim.Dispose()
-  $g.DrawPath((New-Pen 235 255 255 255 8),$outer);$g.DrawPath((New-Pen 145 179 201 210 10),$middle);$g.DrawPath((New-Pen 125 35 48 54 9),$inner);$g.DrawPath((New-Pen 190 255 255 255 3),(Rounded-Path 87 35 826 1930 ($m.radius-7)))
-  $cameraOuter=Rounded-Path ($cx-28) ($cy-28) ($cw+56) ($ch+56) ([Math]::Min($cw,$ch)*.26);$cameraInner=Rounded-Path ($cx-8) ($cy-8) ($cw+16) ($ch+16) ([Math]::Min($cw,$ch)*.225);$cameraRim=[System.Drawing.Drawing2D.GraphicsPath]::new([System.Drawing.Drawing2D.FillMode]::Alternate);$cameraRim.AddPath($cameraOuter,$false);$cameraRim.AddPath($cameraInner,$false);$g.FillPath((New-Brush 145 224 238 244),$cameraRim);$g.DrawPath((New-Pen 235 255 255 255 7),$cameraOuter);$g.DrawPath((New-Pen 155 46 57 62 8),$cameraInner)
-  $leftButton=Rounded-Path 30 470 38 270 16;$rightButton=Rounded-Path 932 405 38 330 16;$g.FillPath((New-Brush 155 213 230 237),$leftButton);$g.FillPath((New-Brush 155 213 230 237),$rightButton);$g.DrawPath((New-Pen 190 255 255 255 4),$leftButton);$g.DrawPath((New-Pen 190 255 255 255 4),$rightButton)
-  foreach($x in @(365,455,545,635)){$g.FillEllipse((New-Brush 135 76 91 98),$x,1969,34,12)};$port=Rounded-Path 458 1963 84 20 9;$g.FillPath((New-Brush 150 53 66 72),$port);$g.DrawPath((New-Pen 160 255 255 255 2),$port)
+  $cameraOuter=Rounded-Path ($cx-28) ($cy-28) ($cw+56) ($ch+56) ([Math]::Min($cw,$ch)*.26);$cameraInner=Rounded-Path ($cx-8) ($cy-8) ($cw+16) ($ch+16) ([Math]::Min($cw,$ch)*.225);$cameraRim=[System.Drawing.Drawing2D.GraphicsPath]::new([System.Drawing.Drawing2D.FillMode]::Alternate);$cameraRim.AddPath($cameraOuter,$false);$cameraRim.AddPath($cameraInner,$false)
+  $leftButton=Rounded-Path 30 470 38 270 16;$rightButton=Rounded-Path 932 405 38 330 16
+  $port=Rounded-Path 458 1963 84 20 9
+  if($m.photoSource){
+    $g.DrawPath((New-Pen 42 255 255 255 4),$outer);$g.DrawPath((New-Pen 24 44 56 62 4),$inner);$g.DrawPath((New-Pen 34 255 255 255 3),$cameraOuter)
+  } else {
+    $rim=[System.Drawing.Drawing2D.LinearGradientBrush]::new([System.Drawing.Point]::new(42,0),[System.Drawing.Point]::new(958,2000),[System.Drawing.Color]::FromArgb(145,251,255,255),[System.Drawing.Color]::FromArgb(88,143,167,177));$g.FillPath($rim,$shell);$rim.Dispose()
+    $g.DrawPath((New-Pen 235 255 255 255 8),$outer);$g.DrawPath((New-Pen 145 179 201 210 10),$middle);$g.DrawPath((New-Pen 125 35 48 54 9),$inner);$g.DrawPath((New-Pen 190 255 255 255 3),(Rounded-Path 87 35 826 1930 ($m.radius-7)))
+    $g.FillPath((New-Brush 145 224 238 244),$cameraRim);$g.DrawPath((New-Pen 235 255 255 255 7),$cameraOuter);$g.DrawPath((New-Pen 155 46 57 62 8),$cameraInner)
+    $g.FillPath((New-Brush 155 213 230 237),$leftButton);$g.FillPath((New-Brush 155 213 230 237),$rightButton);$g.DrawPath((New-Pen 190 255 255 255 4),$leftButton);$g.DrawPath((New-Pen 190 255 255 255 4),$rightButton)
+    foreach($x in @(365,455,545,635)){$g.FillEllipse((New-Brush 135 76 91 98),$x,1969,34,12)};$g.FillPath((New-Brush 150 53 66 72),$port);$g.DrawPath((New-Pen 160 255 255 255 2),$port)
+  }
   $g.Dispose();Save-Layer $bmp (Join-Path $dir 'case-overlay.png')
 
   $bmp=New-Bitmap;$g=New-Graphics $bmp;$g.FillPath([System.Drawing.Brushes]::White,$phone);$g.CompositingMode='SourceCopy';$g.FillPath([System.Drawing.SolidBrush]::new([System.Drawing.Color]::Transparent),$camera);$g.Dispose();Save-Layer $bmp (Join-Path $dir 'print-mask.png')
   $bmp=New-Bitmap;$g=New-Graphics $bmp;$g.FillPath([System.Drawing.Brushes]::White,$camera);$g.Dispose();Save-Layer $bmp (Join-Path $dir 'camera-mask.png')
 
-  $bmp=New-Bitmap;$g=New-Graphics $bmp;$shine=[System.Drawing.PointF[]]@([System.Drawing.PointF]::new(310,18),[System.Drawing.PointF]::new(440,18),[System.Drawing.PointF]::new(785,1982),[System.Drawing.PointF]::new(665,1982));$g.FillPolygon((New-Brush 42 255 255 255),$shine);$edgeShine=[System.Drawing.PointF[]]@([System.Drawing.PointF]::new(75,90),[System.Drawing.PointF]::new(112,62),[System.Drawing.PointF]::new(112,1870),[System.Drawing.PointF]::new(77,1915));$g.FillPolygon((New-Brush 62 255 255 255),$edgeShine);$g.DrawPath((New-Pen 145 255 255 255 5),$phone);$g.DrawPath((New-Pen 115 255 255 255 4),$cameraOuter);$g.Dispose();Save-Layer $bmp (Join-Path $dir 'highlight-overlay.png')
-  $bmp=New-Bitmap;$g=New-Graphics $bmp;$g.DrawPath((New-Pen 110 19 29 34 18),$phone);$g.DrawPath((New-Pen 135 9 12 14 16),$camera);$g.DrawPath((New-Pen 80 12 18 21 24),$inner);$g.Dispose();Save-Layer $bmp (Join-Path $dir 'shadow-overlay.png')
+  $bmp=New-Bitmap;$g=New-Graphics $bmp;$shine=[System.Drawing.PointF[]]@([System.Drawing.PointF]::new(310,18),[System.Drawing.PointF]::new(440,18),[System.Drawing.PointF]::new(785,1982),[System.Drawing.PointF]::new(665,1982));$g.FillPolygon((New-Brush $(if($m.photoSource){18}else{42}) 255 255 255),$shine);$edgeShine=[System.Drawing.PointF[]]@([System.Drawing.PointF]::new(75,90),[System.Drawing.PointF]::new(112,62),[System.Drawing.PointF]::new(112,1870),[System.Drawing.PointF]::new(77,1915));$g.FillPolygon((New-Brush $(if($m.photoSource){22}else{62}) 255 255 255),$edgeShine);$g.DrawPath((New-Pen $(if($m.photoSource){42}else{145}) 255 255 255 5),$phone);$g.DrawPath((New-Pen $(if($m.photoSource){35}else{115}) 255 255 255 4),$cameraOuter);$g.Dispose();Save-Layer $bmp (Join-Path $dir 'highlight-overlay.png')
+  $bmp=New-Bitmap;$g=New-Graphics $bmp;$g.DrawPath((New-Pen $(if($m.photoSource){28}else{110}) 19 29 34 18),$phone);$g.DrawPath((New-Pen $(if($m.photoSource){32}else{135}) 9 12 14 16),$camera);$g.DrawPath((New-Pen $(if($m.photoSource){20}else{80}) 12 18 21 24),$inner);$g.Dispose();Save-Layer $bmp (Join-Path $dir 'shadow-overlay.png')
 
-  $config=[ordered]@{model=$m.name;slug=$m.slug;aspectRatio=[Math]::Round($m.width/$m.height,5);physicalSize=@{width=$m.width;height=$m.height};printArea=@{x=.075;y=.012;width=.85;height=.976};safeArea=@{top=.035;right=.055;bottom=.045;left=.055};cameraExclusion=@{x=$cx/1000;y=$cy/2000;width=$cw/1000;height=$ch/2000};camera=@{layout=$m.layout;lenses=$m.lenses;flash=$m.flash;lidar=$m.lidar};scalingRules=@{canvasWidth=1000;canvasHeight=2000;minLayerSize=60;maxLayerWidth=870;maxLayerHeight=1250};previewCrop=@{x=.05;y=0;width=.90;height=1};assets=@{base='base.png';caseOverlay='case-overlay.png';printMask='print-mask.png';cameraMask='camera-mask.png';highlightOverlay='highlight-overlay.png';shadowOverlay='shadow-overlay.png'}}
+  $config=[ordered]@{id=$m.slug;displayName=$m.name;family=$m.family;model=$m.name;slug=$m.slug;photorealistic=[bool]$m.photoSource;aspectRatio=[Math]::Round($m.width/$m.height,5);physicalSize=@{width=$m.width;height=$m.height};printArea=@{x=.075;y=.012;width=.85;height=.976};safeArea=@{top=.035;right=.055;bottom=.045;left=.055};cameraExclusion=@{x=$cx/1000;y=$cy/2000;width=$cw/1000;height=$ch/2000};camera=@{layout=$m.layout;lenses=$m.lenses;flash=$m.flash;lidar=$m.lidar};scalingRules=@{canvasWidth=1000;canvasHeight=2000;minLayerSize=60;maxLayerWidth=870;maxLayerHeight=1250};previewCrop=@{x=.05;y=0;width=.90;height=1};baseImage="/mockups/$($m.slug)/base.png";maskImage="/mockups/$($m.slug)/print-mask.png";overlayImage="/mockups/$($m.slug)/case-overlay.png";shadowImage="/mockups/$($m.slug)/shadow-overlay.png";assets=@{base='base.png';caseOverlay='case-overlay.png';printMask='print-mask.png';cameraMask='camera-mask.png';highlightOverlay='highlight-overlay.png';shadowOverlay='shadow-overlay.png'}}
   $config | ConvertTo-Json -Depth 8 | Set-Content -Encoding utf8 (Join-Path $dir 'config.json')
   $phone.Dispose();$camera.Dispose();$outer.Dispose();$middle.Dispose();$inner.Dispose();$shell.Dispose();$cameraOuter.Dispose();$cameraInner.Dispose();$cameraRim.Dispose();$leftButton.Dispose();$rightButton.Dispose();$port.Dispose()
 }

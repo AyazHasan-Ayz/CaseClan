@@ -1,0 +1,74 @@
+﻿{
+    "id":  "iphone-16-plus",
+    "displayName":  "iPhone 16 Plus",
+    "family":  "iPhone 16",
+    "model":  "iPhone 16 Plus",
+    "slug":  "iphone-16-plus",
+    "photorealistic":  true,
+    "aspectRatio":  0.48341,
+    "physicalSize":  {
+                         "height":  6.33,
+                         "width":  3.06
+                     },
+    "printArea":  {
+                      "y":  0.012,
+                      "width":  0.85,
+                      "height":  0.976,
+                      "x":  0.075
+                  },
+    "safeArea":  {
+                     "left":  0.055,
+                     "right":  0.055,
+                     "bottom":  0.045,
+                     "top":  0.035
+                 },
+    "cameraExclusion":  {
+                            "y":  0.037,
+                            "width":  0.286,
+                            "height":  0.2445,
+                            "x":  0.078
+                        },
+    "camera":  {
+                   "flash":  [
+                                 0.87,
+                                 0.5
+                             ],
+                   "layout":  "dual-vertical",
+                   "lenses":  [
+                                  [
+                                      0.5,
+                                      0.27
+                                  ],
+                                  [
+                                      0.5,
+                                      0.73
+                                  ]
+                              ],
+                   "lidar":  null
+               },
+    "scalingRules":  {
+                         "maxLayerHeight":  1250,
+                         "canvasWidth":  1000,
+                         "canvasHeight":  2000,
+                         "minLayerSize":  60,
+                         "maxLayerWidth":  870
+                     },
+    "previewCrop":  {
+                        "y":  0,
+                        "width":  0.9,
+                        "height":  1,
+                        "x":  0.05
+                    },
+    "baseImage":  "/mockups/iphone-16-plus/base.png",
+    "maskImage":  "/mockups/iphone-16-plus/print-mask.png",
+    "overlayImage":  "/mockups/iphone-16-plus/case-overlay.png",
+    "shadowImage":  "/mockups/iphone-16-plus/shadow-overlay.png",
+    "assets":  {
+                   "base":  "base.png",
+                   "shadowOverlay":  "shadow-overlay.png",
+                   "cameraMask":  "camera-mask.png",
+                   "printMask":  "print-mask.png",
+                   "highlightOverlay":  "highlight-overlay.png",
+                   "caseOverlay":  "case-overlay.png"
+               }
+}

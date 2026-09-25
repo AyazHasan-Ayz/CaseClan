@@ -3,7 +3,7 @@ import type {Customization} from './customizer.ts';
 export const clans = ['NOIR','VALOR','SAGE','AURA'] as const;
 export type Clan=typeof clans[number];
 export const clanInfo:Record<Clan,{line:string;finish:string;color:string;index:number}>={NOIR:{line:'Ambitious. Powerful. Always Ahead.',finish:'Carbon black',color:'#242426',index:0},VALOR:{line:'Bold. Fearless. Built Different.',finish:'Oxblood',color:'#74282d',index:1},SAGE:{line:'Refined. Intelligent. Purposeful.',finish:'Midnight blue',color:'#344556',index:2},AURA:{line:'Elegant. Calm. Unshaken.',finish:'Warm ivory',color:'#d6c9b5',index:3}};
-export const devices=['iPhone 17','iPhone 16','iPhone 17 Pro Max','iPhone 17 Pro','iPhone 16 Pro Max','iPhone 16 Pro','iPhone 15','iPhone 15 Pro Max','iPhone 15 Pro','iPhone 15 Plus'].map((name,image)=>({name,slug:name.toLowerCase().replaceAll(' ','-'),brand:'iPhone',image}));
+export const devices=['iPhone 17','iPhone 17 Pro','iPhone 17 Pro Max','iPhone 16','iPhone 16 Plus','iPhone 16 Pro','iPhone 16 Pro Max','iPhone 15','iPhone 15 Plus','iPhone 15 Pro','iPhone 15 Pro Max'].map((name,image)=>({name,slug:name.toLowerCase().replaceAll(' ','-'),brand:'iPhone',image}));
 export const styles=['Minimal Name','Signature Style','Initial + Name','Word Cloud','Photo Collage'] as const;
 export type Design={name:string;font:string;textColor:string;style:string;upload?:string;filename?:string;instructions?:string;customization?:Customization;artifactId?:string;preview?:string};
 export type Product={id:string;name:string;price:number;clan:Clan;devices:string[];colors:string[];material:string;style:string;magsafe:boolean;rating:number;reviews:number;collection:string;rank:number;imageDevice:string;kind:'ready'|'custom'};
