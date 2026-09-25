@@ -1,7 +1,7 @@
 Add-Type -AssemblyName System.Drawing
 
 $models = @(
-  @{slug='iphone-17'; name='iPhone 17'; family='iPhone 17'; width=2.81; height=5.89; radius=112; layout='single-wide'; camera=@{x=76;y=71;width=866;height=327}; lenses=@(@(.12,.42)); flash=@(.82,.42); lidar=$null; photoSource='assets/mockups/iphone-17-source.png'; crop=@(333,232,460,960)},
+  @{slug='iphone-17'; name='iPhone 17'; family='iPhone 17'; width=2.81; height=5.89; radius=112; layout='dual-vertical'; camera=@{x=64;y=57;width=445;height=535}; lenses=@(@(.31,.27),@(.31,.73)); flash=@(.87,.48); lidar=$null; photoSource='assets/mockups/iphone-17-source.png'; crop=@(284,294,464,990)},
   @{slug='iphone-17-pro'; name='iPhone 17 Pro'; family='iPhone 17'; width=2.84; height=5.91; radius=108; layout='triple-wide'; camera=@{x=78;y=88;width=866;height=533}; lenses=@(@(.18,.30),@(.50,.48),@(.18,.70)); flash=@(.82,.24); lidar=@(.82,.72); photoSource='assets/mockups/iphone-17-pro-source.png'; crop=@(332,214,460,975)},
   @{slug='iphone-17-pro-max'; name='iPhone 17 Pro Max'; family='iPhone 17'; width=3.02; height=6.31; radius=105; layout='triple-wide'; camera=@{x=68;y=73;width=854;height=582}; lenses=@(@(.18,.28),@(.48,.47),@(.18,.69)); flash=@(.84,.22); lidar=@(.84,.67); photoSource='assets/mockups/iphone-17-pro-max-source.png'; crop=@(315,168,500,1045)},
   @{slug='iphone-16'; name='iPhone 16'; family='iPhone 16'; width=2.78; height=5.81; radius=114; layout='dual-vertical'; camera=@{x=78;y=74;width=286;height=489}; lenses=@(@(.5,.27),@(.5,.73)); flash=@(.87,.50); lidar=$null; photoSource='assets/mockups/iphone-16-source.png'; crop=@(335,232,480,970)},

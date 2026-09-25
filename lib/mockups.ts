@@ -1,4 +1,4 @@
-export type CameraLayout='dual-diagonal'|'dual-vertical'|'single-wide'|'triple-square'|'triple-wide';
+export type CameraLayout='dual-diagonal'|'dual-vertical'|'triple-square'|'triple-wide';
 export type Rect={x:number;y:number;width:number;height:number};
 export type MockupAssets={base:string;caseOverlay:string;printMask:string;cameraMask:string;highlightOverlay:string;shadowOverlay:string};
 export type ModelConfig={slug:string;model:string;width:number;height:number;camera:Rect;safe:number;cameraLayout:CameraLayout;cornerRadius:number;photorealistic?:boolean;printArea:Rect;safeArea:{top:number;right:number;bottom:number;left:number};previewCrop:Rect;assets:MockupAssets};
@@ -7,7 +7,7 @@ const assets=(slug:string):MockupAssets=>({base:`/mockups/${slug}/base.png`,case
 const config=(slug:string,model:string,width:number,height:number,camera:Rect,cameraLayout:CameraLayout,cornerRadius:number,photorealistic=false):ModelConfig=>({slug,model,width,height,camera,cameraLayout,cornerRadius,photorealistic,safe:70,printArea:{x:.075,y:.012,width:.85,height:.976},safeArea:{top:.035,right:.055,bottom:.045,left:.055},previewCrop:{x:.05,y:0,width:.9,height:1},assets:assets(slug)});
 
 export const modelConfigs:Record<string,ModelConfig>={
- 'iphone-17':config('iphone-17','iPhone 17',2.81,5.89,{x:76,y:71,width:866,height:327},'single-wide',112,true),
+ 'iphone-17':config('iphone-17','iPhone 17',2.81,5.89,{x:64,y:57,width:445,height:535},'dual-vertical',112,true),
  'iphone-17-pro':config('iphone-17-pro','iPhone 17 Pro',2.84,5.91,{x:78,y:88,width:866,height:533},'triple-wide',108,true),
  'iphone-17-pro-max':config('iphone-17-pro-max','iPhone 17 Pro Max',3.02,6.31,{x:68,y:73,width:854,height:582},'triple-wide',105,true),
  'iphone-16':config('iphone-16','iPhone 16',2.78,5.81,{x:78,y:74,width:286,height:489},'dual-vertical',114,true),

@@ -29,8 +29,8 @@ test('the custom editor starts with a blank case',()=>{assert.equal(initialCusto
 test('phone models use their matching 2.5D camera geometry',()=>{
  assert.equal(modelConfig('iphone-15').cameraLayout,'dual-diagonal');
  assert.equal(modelConfig('iphone-16').cameraLayout,'dual-vertical');
- assert.equal(modelConfig('iphone-17').cameraLayout,'single-wide');
- assert.deepEqual(modelConfig('iphone-17').camera,{x:76,y:71,width:866,height:327});
+ assert.equal(modelConfig('iphone-17').cameraLayout,'dual-vertical');
+ assert.deepEqual(modelConfig('iphone-17').camera,{x:64,y:57,width:445,height:535});
  assert.equal(modelConfig('iphone-16-pro-max').cameraLayout,'triple-square');
  assert.equal(modelConfig('iphone-17-pro').cameraLayout,'triple-wide');
  assert.equal(modelConfig('iphone-17-pro-max').cameraLayout,'triple-wide');
