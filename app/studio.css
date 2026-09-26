@@ -17,4 +17,5 @@
 .mockup-badge{position:absolute;left:14px;bottom:13px;padding:7px 9px;background:#101112d9;color:#fff;border:1px solid #ffffff2b;border-radius:3px;font-size:9px;line-height:1;letter-spacing:.15em;pointer-events:none;backdrop-filter:blur(8px)}
 .studio-final .realistic-mockup{background:#242526;box-shadow:inset 0 0 0 1px #ffffff14,0 24px 60px #0005}
 .editor-stage .realistic-mockup{border:1px solid #d2d1ce}
+.image-fit-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:2px 0 16px}.image-fit-actions button{border:1px solid #1d1d1d;background:#fff;padding:9px 8px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}.image-fit-actions button:first-child{background:#171717;color:#fff}.resolution-warning{color:#8a4d00!important;background:#fff7e8;border:1px solid #efcf99;border-radius:4px;padding:10px 11px;font-size:12px;line-height:1.4;margin:10px 0 16px}
 @media(max-width:767px){.realistic-mockup{border-radius:5px}.mockup-badge{left:9px;bottom:9px;font-size:8px}.editor-stage .realistic-mockup{min-height:350px}}

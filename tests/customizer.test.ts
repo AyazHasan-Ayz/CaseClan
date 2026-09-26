@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {existsSync,readFileSync} from 'node:fs';
 import {join} from 'node:path';
-import {constrainLayer,initialCustomization,layerBounds,hitLayer,modelConfig,textLayer} from '../lib/customizer.ts';
+import {constrainLayer,fitImageLayer,imageMinimumSize,imageZoomPercent,initialCustomization,layerBounds,hitLayer,modelConfig,printRect,resizeImageLayer,textLayer} from '../lib/customizer.ts';
 import {modelConfigs} from '../lib/mockups.ts';
 import {devices} from '../lib/catalog.ts';
 test('rotated artwork remains inside the print-safe area and outside the camera',()=>{
@@ -26,6 +26,17 @@ test('hit testing respects rotations and front-to-back layer order',()=>{
  assert.equal(hitLayer([a,b],580,1100),undefined);
 });
 test('the custom editor starts with a blank case',()=>{assert.equal(initialCustomization.layers.length,0);assert.equal(initialCustomization.name,'Custom artwork')});
+test('portrait, landscape, square, wide and tall uploads cover the full model print area without distortion',()=>{
+ const cases=[[1200,1800],[1800,1200],[1400,1400],[3200,700],[700,3200]],print=printRect('iphone-17');
+ for(const [sourceWidth,sourceHeight] of cases){
+  const image=fitImageLayer({...textLayer('upload'),type:'image' as const,sourceWidth,sourceHeight,width:sourceWidth,height:sourceHeight},'iphone-17');
+  assert.ok(image.width>=print.width-0.001);assert.ok(image.height>=print.height-0.001);
+  assert.ok(Math.abs(image.width/image.height-sourceWidth/sourceHeight)<0.00001);
+  assert.ok(Math.abs(image.x-(print.x+print.width/2))<0.001);assert.ok(Math.abs(image.y-(print.y+print.height/2))<0.001);
+  const shrunken=constrainLayer({...image,width:image.width*.1,height:image.height*.1,x:-500,y:-500},'iphone-17'),minimum=imageMinimumSize(image,'iphone-17');
+  assert.ok(shrunken.width>=minimum.width-0.001);assert.ok(shrunken.height>=minimum.height-0.001);assert.equal(imageZoomPercent(resizeImageLayer(image,'iphone-17',80),'iphone-17'),100);
+ }
+});
 test('phone models use their matching 2.5D camera geometry',()=>{
  assert.equal(modelConfig('iphone-15').cameraLayout,'dual-diagonal');
  assert.equal(modelConfig('iphone-16').cameraLayout,'dual-vertical');
