@@ -6,7 +6,8 @@
     "dev": "next dev --hostname 0.0.0.0",
     "build": "next build",
     "start": "node scripts/serve.mjs",
-    "test": "node --experimental-strip-types --test tests/membership.test.ts tests/cart.test.ts tests/customizer.test.ts tests/catalog.test.ts"
+    "test": "node --experimental-strip-types --test tests/membership.test.ts tests/cart.test.ts tests/customizer.test.ts tests/catalog.test.ts tests/seo.test.ts",
+    "check:seo": "node scripts/check-seo.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",

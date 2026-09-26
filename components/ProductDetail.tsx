@@ -18,7 +18,7 @@ export default function ProductDetail({product:p}:{product:Product}){
    <p className="breadcrumbs"><Link href="/">Home</Link><span>/</span><Link href="/ready-designs/">Ready Designs</Link><span>/</span>{p.name}</p>
    <div className="product-detail-layout">
     <div className="gallery fixed-design-gallery">
-     <div className="gallery-main supplied-gallery"><img src={productImage(p)} alt={`${p.name} fixed artwork`}/></div>
+     <div className="gallery-main supplied-gallery"><img src={productImage(p)} alt={`${p.name} fixed CASECLAN phone case artwork`} width="900" height="1125"/></div>
      <p className="small muted">The artwork shown is the finished design. Your phone selection changes only the physical case fit.</p>
     </div>
     <div className="product-details fixed-product-details">

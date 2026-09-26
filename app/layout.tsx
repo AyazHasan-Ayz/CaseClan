@@ -3,5 +3,8 @@ import './globals.css';
 import './studio.css';
 import StoreProvider from '@/components/StoreProvider';
 import Shell from '@/components/Shell';
-export const metadata: Metadata = { title: { default: 'CASECLAN — Premium Phone Cases', template: '%s | CASECLAN' }, description: 'Shop fixed CASECLAN artwork or choose your phone and create a custom case from a blank canvas.', icons: { icon: '/favicon.svg' }, openGraph: { title: 'CASECLAN — Premium Phone Cases', description: 'Ready designs and a blank custom case studio for flagship phones.', type: 'website' } };
-export default function RootLayout({ children }: Readonly<{children: React.ReactNode}>) { return <html lang="en"><body><StoreProvider><Shell>{children}</Shell></StoreProvider></body></html>; }
+import JsonLd from '@/components/seo/JsonLd';
+import {siteConfig} from '@/lib/seo/config';
+import {organizationSchema,websiteSchema} from '@/lib/seo/schemas';
+export const metadata: Metadata = { metadataBase:new URL(siteConfig.url),title:{default:'Personalized Phone Covers & Custom Mobile Cases | CASECLAN',template:'%s | CASECLAN'},description:siteConfig.description,icons:{icon:'/favicon.svg'},alternates:{canonical:'/'},openGraph:{title:'Personalized Phone Covers & Custom Mobile Cases | CASECLAN',description:siteConfig.description,url:'/',siteName:'CASECLAN',type:'website',images:[{url:siteConfig.defaultImage,alt:'CASECLAN premium phone case'}]},twitter:{card:'summary_large_image',title:'Personalized Phone Covers & Custom Mobile Cases | CASECLAN',description:siteConfig.description,images:[siteConfig.defaultImage]}};
+export default function RootLayout({ children }: Readonly<{children: React.ReactNode}>) { return <html lang="en"><body><JsonLd data={[organizationSchema(),websiteSchema()]}/><StoreProvider><Shell>{children}</Shell></StoreProvider></body></html>; }
