@@ -3,16 +3,16 @@
 import Link from 'next/link';
 import {useEffect,useRef,useState} from 'react';
 import {useRouter} from 'next/navigation';
-import {ArrowRight,Check,Heart,LockKeyhole,ShieldCheck,Truck} from 'lucide-react';
+import {ArrowRight,Check,Heart,LockKeyhole,Minus,Plus,ShieldCheck,Truck} from 'lucide-react';
 import {Product,defaultDevice,deviceName,money,productImage} from '@/lib/catalog';
 import {useStore} from './StoreProvider';
 
 export default function ProductDetail({product:p}:{product:Product}){
  const store=useStore(),router=useRouter(),initialized=useRef(false);
- const [device,setDevice]=useState(()=>store.selectedDevice&&p.devices.includes(store.selectedDevice)?store.selectedDevice:defaultDevice(p));
+ const [device,setDevice]=useState(()=>store.selectedDevice&&p.devices.includes(store.selectedDevice)?store.selectedDevice:defaultDevice(p)),[quantity,setQuantity]=useState(1);
  useEffect(()=>{if(!store.ready||initialized.current)return;initialized.current=true;const query=new URLSearchParams(window.location.search).get('device');const next=query&&p.devices.includes(query)?query:store.selectedDevice&&p.devices.includes(store.selectedDevice)?store.selectedDevice:defaultDevice(p);setDevice(next);store.setSelectedDevice(next)},[p,store.ready]);
  const choose=(next:string)=>{initialized.current=true;setDevice(next);store.setSelectedDevice(next)};
- const add=(buy=false)=>{store.add(p,device,p.colors[0]);if(buy){store.setDrawer(false);router.push('/checkout/')}};
+ const add=(buy=false)=>{store.add(p,device,p.colors[0],undefined,quantity);if(buy){store.setDrawer(false);router.push('/checkout/')}};
  return <>
   <div className="product-page">
    <p className="breadcrumbs"><Link href="/">Home</Link><span>/</span><Link href="/ready-designs/">Ready Designs</Link><span>/</span>{p.name}</p>
@@ -29,6 +29,7 @@ export default function ProductDetail({product:p}:{product:Product}){
      <p className="product-description">A finished CASECLAN design printed exactly as shown on a premium protective case made for your selected phone.</p>
      <div className="template-lock-note"><LockKeyhole size={18}/><div><strong>Artwork locked as shown</strong><span>No names, colors, graphics, or layout elements are changed.</span></div></div>
      <label className="field-label">Phone model<select value={device} onChange={event=>choose(event.target.value)}>{p.devices.map(item=><option key={item} value={item}>{deviceName(item)}</option>)}</select></label>
+     <div className="product-quantity"><span>Quantity</span><div className="quantity"><button type="button" aria-label="Decrease quantity" disabled={quantity<=1} onClick={()=>setQuantity(value=>Math.max(1,value-1))}><Minus size={15}/></button><output aria-live="polite">{quantity}</output><button type="button" aria-label="Increase quantity" disabled={quantity>=10} onClick={()=>setQuantity(value=>Math.min(10,value+1))}><Plus size={15}/></button></div></div>
      <button className="button wide" onClick={()=>add()}>ADD TO CART — {money(p.price)} <ArrowRight size={15}/></button>
      <button className="button outline wide" onClick={()=>add(true)}>BUY NOW <ArrowRight size={15}/></button>
      <div className="purchase-benefits"><span><Truck size={18}/>Free shipping above ₹999</span><span><Check size={18}/>Easy 7-day returns</span><span><ShieldCheck size={18}/>Secure payment</span></div>

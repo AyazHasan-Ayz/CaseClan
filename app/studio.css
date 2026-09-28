@@ -19,3 +19,26 @@
 .editor-stage .realistic-mockup{border:1px solid #d2d1ce}
 .image-fit-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:2px 0 16px}.image-fit-actions button{border:1px solid #1d1d1d;background:#fff;padding:9px 8px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}.image-fit-actions button:first-child{background:#171717;color:#fff}.resolution-warning{color:#8a4d00!important;background:#fff7e8;border:1px solid #efcf99;border-radius:4px;padding:10px 11px;font-size:12px;line-height:1.4;margin:10px 0 16px}
 @media(max-width:767px){.realistic-mockup{border-radius:5px}.mockup-badge{left:9px;bottom:9px;font-size:8px}.editor-stage .realistic-mockup{min-height:350px}}
+
+/* Mobile studio: the preview remains primary and controls become a safe-area tray/sheet. */
+@media(max-width:767px){
+ .studio-step-2{padding:10px 10px calc(92px + env(safe-area-inset-bottom))}
+ .studio-step-2 .studio-top{position:sticky;top:0;z-index:12;margin:-10px -10px 10px;padding:8px 10px;background:#fafafaf2;border-bottom:1px solid #e8e6e2;backdrop-filter:blur(12px)}
+ .studio-top .text-link,.studio-top .editor-history a,.studio-top .editor-history button{min-height:44px;padding:8px}
+ .editor-workspace{gap:8px}.editor-stage{padding:6px;border-radius:8px}
+ .studio-step-2 .editor-stage .case-scene{height:clamp(350px,52dvh,465px);min-height:350px}
+ .editor-mode{display:grid;grid-template-columns:1fr 1fr auto;gap:5px}.editor-mode button{min-height:44px;padding:7px}.editor-mode label{min-height:44px;padding:0 7px}
+ .view-controls{display:grid;grid-template-columns:repeat(4,1fr);width:100%}.view-controls button{min-height:44px}
+ .editor-tools{position:fixed;left:0;right:0;bottom:0;z-index:18;border-width:1px 0 0;border-radius:0;padding:6px 8px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -12px 32px #0002}
+ .editor-tools button{min-height:58px;padding:7px 2px}.editor-tools button svg{width:20px;height:20px}
+ .editor-panel{bottom:calc(70px + env(safe-area-inset-bottom));left:8px;right:8px;max-height:min(58dvh,560px);border-radius:18px;padding:14px 16px calc(22px + env(safe-area-inset-bottom));overscroll-behavior:contain}
+ .sheet-close{position:sticky;top:-14px;z-index:2;min-height:44px;background:#fff;border-bottom:1px solid #eee;margin:-14px 0 12px;padding:10px 0}
+ .editor-next{min-height:50px;margin-bottom:4px}.model-note{font-size:11px!important;line-height:1.45}
+ .layer-actions button,.image-fit-actions button,.background-options button,.layer-list button,.element-grid button,.suggestion-chips button{min-height:44px}
+ .range-label input{min-height:36px}.add-text{align-items:stretch}.add-text .button{min-height:48px}
+}
+@media(max-width:360px){
+ .studio-step-2 .editor-stage .case-scene{height:350px}
+ .editor-mode button{font-size:10px}.editor-mode label{font-size:10px;padding-inline:4px}
+ .editor-tools{padding-inline:3px}.editor-tools button{font-size:10px}
+}
