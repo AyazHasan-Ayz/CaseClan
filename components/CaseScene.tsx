@@ -11,14 +11,14 @@ const VIEW:Record<string,{angle:number;skew:number;scale:number}>={Front:{angle:
 const assetCache=new Map<string,Promise<HTMLImageElement>>();
 
 function rounded(ctx:CanvasRenderingContext2D,x:number,y:number,w:number,h:number,r:number){ctx.beginPath();ctx.roundRect(x,y,w,h,Math.min(r,w/2,h/2))}
-function layout(size:{width:number;height:number},design:Customization,view:string):Frame{const p=VIEW[view]||VIEW.Front,c=modelConfig(design.device),maxH=size.height*.79,maxW=size.width*.48,ratio=c.width/c.height,h=Math.min(maxH,maxW/ratio)*p.scale,w=h*ratio;return {x:(size.width-w)/2,y:(size.height-h)/2-6,w,h,angle:p.angle,skew:p.skew}}
+function layout(size:{width:number;height:number},design:Customization,view:string):Frame{const p=VIEW[view]||VIEW.Front,c=modelConfig(design.device),mobile=size.width<600,maxH=size.height*(mobile ? .9 : .79),maxW=size.width*(mobile ? .76 : .48),ratio=c.width/c.height,h=Math.min(maxH,maxW/ratio)*p.scale,w=h*ratio;return {x:(size.width-w)/2,y:(size.height-h)/2-(mobile?0:6),w,h,angle:p.angle,skew:p.skew}}
 function loadAsset(src:string){if(!assetCache.has(src))assetCache.set(src,new Promise((resolve,reject)=>{const image=new Image();image.onload=()=>resolve(image);image.onerror=()=>reject(new Error(`Unable to load ${src}`));image.src=src}));return assetCache.get(src)!}
 async function loadMockup(device:string):Promise<MockupLayers>{const a=modelConfig(device).assets;const [base,caseOverlay,highlight,shadow]=await Promise.all([loadAsset(a.base),loadAsset(a.caseOverlay),loadAsset(a.highlightOverlay),loadAsset(a.shadowOverlay)]);return {base,caseOverlay,highlight,shadow}}
 
-async function paint(canvas:HTMLCanvasElement,d:Customization,selected:string|undefined,guides:boolean,view:string){
- const dpr=Math.min(2,window.devicePixelRatio||1),cssW=Math.max(320,canvas.clientWidth||720),cssH=Math.max(420,canvas.clientHeight||820);
- if(canvas.width!==Math.round(cssW*dpr)||canvas.height!==Math.round(cssH*dpr)){canvas.width=Math.round(cssW*dpr);canvas.height=Math.round(cssH*dpr)}
- const ctx=canvas.getContext('2d')!;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,cssW,cssH);
+async function paint(canvas:HTMLCanvasElement,d:Customization,selected:string|undefined,guides:boolean,view:string,isCurrent:()=>boolean=()=>true){
+ const dpr=Math.min(2,window.devicePixelRatio||1),cssW=Math.max(1,canvas.clientWidth||720),cssH=Math.max(1,canvas.clientHeight||820),pixelW=Math.round(cssW*dpr),pixelH=Math.round(cssH*dpr),buffer=document.createElement('canvas');
+ buffer.width=pixelW;buffer.height=pixelH;
+ const ctx=buffer.getContext('2d')!;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,cssW,cssH);
  const [art,layers]=await Promise.all([renderArtwork(d,1000,guides,selected),loadMockup(d.device)]),f=layout({width:cssW,height:cssH},d,view),c=modelConfig(d.device),radius=c.cornerRadius*f.w/1000;
  const bg=ctx.createLinearGradient(0,0,0,cssH);bg.addColorStop(0,'#f4f3f1');bg.addColorStop(.67,'#dedcd8');bg.addColorStop(.68,'#d0ceca');bg.addColorStop(1,'#e8e6e2');ctx.fillStyle=bg;ctx.fillRect(0,0,cssW,cssH);
  const halo=ctx.createRadialGradient(cssW*.39,cssH*.25,5,cssW*.47,cssH*.42,cssW*.58);halo.addColorStop(0,'rgba(255,255,255,.98)');halo.addColorStop(.56,'rgba(255,255,255,.24)');halo.addColorStop(1,'rgba(255,255,255,0)');ctx.fillStyle=halo;ctx.fillRect(0,0,cssW,cssH);
@@ -34,12 +34,16 @@ async function paint(canvas:HTMLCanvasElement,d:Customization,selected:string|un
  ctx.drawImage(layers.caseOverlay,f.x,f.y,f.w,f.h);
  ctx.drawImage(layers.highlight,f.x,f.y,f.w,f.h);
  ctx.restore();
+ if(!isCurrent())return false;
+ if(canvas.width!==pixelW||canvas.height!==pixelH){canvas.width=pixelW;canvas.height=pixelH}
+ const target=canvas.getContext('2d')!;target.setTransform(1,0,0,1,0,0);target.clearRect(0,0,pixelW,pixelH);target.drawImage(buffer,0,0);
+ return true;
 }
 
 export default function CaseScene(props:Props){
- const canvas=useRef<HTMLCanvasElement>(null),gesture=useRef<{layer:Layer;latest:Layer;mode:'move'|'scale'|'pinch';x:number;y:number;distance?:number;midX?:number;midY?:number}|null>(null),pointers=useRef(new Map<number,{x:number;y:number}>()),[loading,setLoading]=useState(true);
- const redraw=useCallback(()=>{if(!canvas.current)return;paint(canvas.current,props.design,props.selected,!!props.guides,props.view||'Front').then(()=>setLoading(false)).catch(()=>setLoading(false))},[props.design,props.selected,props.guides,props.view]);
- useEffect(()=>{redraw();const el=canvas.current;if(!el)return;const observer=new ResizeObserver(redraw);observer.observe(el);return()=>observer.disconnect()},[redraw]);
+ const canvas=useRef<HTMLCanvasElement>(null),renderVersion=useRef(0),gesture=useRef<{layer:Layer;latest:Layer;mode:'move'|'scale'|'pinch';x:number;y:number;distance?:number;midX?:number;midY?:number}|null>(null),pointers=useRef(new Map<number,{x:number;y:number}>()),[loading,setLoading]=useState(true);
+ const redraw=useCallback(()=>{const el=canvas.current;if(!el)return;const version=++renderVersion.current;paint(el,props.design,props.selected,!!props.guides,props.view||'Front',()=>version===renderVersion.current&&canvas.current===el).then(committed=>{if(committed)setLoading(false)}).catch(()=>{if(version===renderVersion.current)setLoading(false)})},[props.design,props.selected,props.guides,props.view]);
+ useEffect(()=>{redraw();const el=canvas.current;if(!el)return;const observer=new ResizeObserver(redraw);observer.observe(el);return()=>{renderVersion.current++;observer.disconnect()}},[redraw]);
  useEffect(()=>{props.onCapture?.(()=>canvas.current?.toDataURL('image/webp',.9)||'')},[props.onCapture,props.design,props.view]);
  const pointFromClient=(clientX:number,clientY:number)=>{const el=canvas.current!,rect=el.getBoundingClientRect(),f=layout({width:rect.width,height:rect.height},props.design,props.view||'Front');return {x:(clientX-rect.left-f.x)/f.w*1000,y:(clientY-rect.top-f.y)/f.h*2000}};
  const down=(e:ReactPointerEvent<HTMLCanvasElement>)=>{if(!props.editing)return;const p=pointFromClient(e.clientX,e.clientY);pointers.current.set(e.pointerId,p);e.currentTarget.setPointerCapture(e.pointerId);if(pointers.current.size===2){const points=[...pointers.current.values()],selectedLayer=props.design.layers.find(item=>item.id===props.selected&&item.type==='image'&&!item.locked),base=gesture.current?.latest||selectedLayer;if(base){const distance=Math.hypot(points[1].x-points[0].x,points[1].y-points[0].y),midX=(points[0].x+points[1].x)/2,midY=(points[0].y+points[1].y)/2;gesture.current={layer:base,latest:base,mode:'pinch',x:0,y:0,distance,midX,midY};props.onSelect?.(base.id)}return}const layer=hitLayer(props.design.layers,p.x,p.y);if(!layer||layer.locked)return;props.onSelect?.(layer.id);const scale=Math.abs(p.x-layer.x)>layer.width*.36&&Math.abs(p.y-layer.y)>layer.height*.3;gesture.current={layer,x:p.x,y:p.y,latest:layer,mode:scale?'scale':'move'}};
