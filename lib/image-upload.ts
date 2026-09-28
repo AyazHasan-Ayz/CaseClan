@@ -1,0 +1,14 @@
+export const MAX_UPLOAD_BYTES=25*1024*1024;
+
+type FileDescriptor={name:string;type:string;size:number};
+const supportedExtensions=new Set(['jpg','jpeg','png','webp','gif','svg','heic','heif']);
+
+export function imageExtension(name:string){return name.toLowerCase().split('.').pop()||''}
+export function isHeicFile(file:Pick<FileDescriptor,'name'|'type'>){const type=file.type.toLowerCase();return type==='image/heic'||type==='image/heif'||type==='image/heic-sequence'||type==='image/heif-sequence'||['heic','heif'].includes(imageExtension(file.name))}
+export function isSupportedImageFile(file:FileDescriptor){const type=file.type.toLowerCase();return file.size>0&&file.size<=MAX_UPLOAD_BYTES&&(type.startsWith('image/')||supportedExtensions.has(imageExtension(file.name)))}
+
+function readBlob(blob:Blob){return new Promise<string>((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>typeof reader.result==='string'?resolve(reader.result):reject(new Error('Image data was unavailable.'));reader.onerror=()=>reject(reader.error||new Error('Image could not be read.'));reader.onabort=()=>reject(new Error('Image reading was cancelled.'));reader.readAsDataURL(blob)})}
+function loadImage(src:string){return new Promise<HTMLImageElement>((resolve,reject)=>{const image=new Image();image.onload=()=>image.naturalWidth>0&&image.naturalHeight>0?resolve(image):reject(new Error('Image dimensions were invalid.'));image.onerror=()=>reject(new Error('Image could not be decoded.'));image.src=src})}
+async function canvasDataUrl(canvas:HTMLCanvasElement){const blob=await new Promise<Blob|null>(resolve=>canvas.toBlob(resolve,'image/webp',.9));if(blob)return readBlob(blob);const fallback=await new Promise<Blob|null>(resolve=>canvas.toBlob(resolve,'image/png'));if(fallback)return readBlob(fallback);throw new Error('Image preview could not be created.')}
+
+export async function prepareUploadedImage(file:File){let printableBlob:Blob=file;if(isHeicFile(file)){const {default:heic2any}=await import('heic2any');const converted=await heic2any({blob:file,toType:'image/jpeg',quality:.94});printableBlob=Array.isArray(converted)?converted[0]:converted;if(!printableBlob)throw new Error('HEIC conversion returned no image.')}const originalSrc=await readBlob(printableBlob),image=await loadImage(originalSrc),sourceWidth=image.naturalWidth,sourceHeight=image.naturalHeight;if(!Number.isFinite(sourceWidth)||!Number.isFinite(sourceHeight)||sourceWidth<1||sourceHeight<1)throw new Error('Image dimensions were invalid.');const scale=Math.min(1,2048/Math.max(sourceWidth,sourceHeight)),canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(sourceWidth*scale));canvas.height=Math.max(1,Math.round(sourceHeight*scale));const context=canvas.getContext('2d');if(!context)throw new Error('Image canvas is unavailable.');context.drawImage(image,0,0,canvas.width,canvas.height);return {src:await canvasDataUrl(canvas),originalSrc,sourceWidth,sourceHeight}}

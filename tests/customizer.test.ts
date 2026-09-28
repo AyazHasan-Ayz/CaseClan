@@ -5,6 +5,7 @@ import {join} from 'node:path';
 import {constrainLayer,fitImageLayer,imageMinimumSize,imageZoomPercent,initialCustomization,layerBounds,hitLayer,modelConfig,printRect,resizeImageLayer,textLayer} from '../lib/customizer.ts';
 import {modelConfigs} from '../lib/mockups.ts';
 import {devices} from '../lib/catalog.ts';
+import {MAX_UPLOAD_BYTES,isHeicFile,isSupportedImageFile} from '../lib/image-upload.ts';
 test('rotated artwork remains inside the print-safe area and outside the camera',()=>{
  for(const device of ['iphone-17','iphone-17-pro','iphone-17-pro-max','iphone-16-pro','iphone-15-plus']){
   const c=modelConfig(device);
@@ -64,4 +65,14 @@ test('every supported phone owns a complete layered mockup bundle',()=>{
   assert.match(config.assets.base,new RegExp(`/mockups/${device.slug}/base\\.png$`));
   for(const file of files)assert.ok(existsSync(join(process.cwd(),'public','mockups',device.slug,file)),`${device.slug}/${file} is missing`);
  }
+});
+test('mobile gallery images remain valid when a provider omits MIME metadata',()=>{
+ for(const name of ['camera-photo.JPG','screenshot.png','shared-photo.webp','iphone-photo.heic'])assert.equal(isSupportedImageFile({name,type:'',size:2_000_000}),true);
+ assert.equal(isSupportedImageFile({name:'notes.txt',type:'',size:2_000}),false);
+ assert.equal(isSupportedImageFile({name:'photo.jpg',type:'image/jpeg',size:MAX_UPLOAD_BYTES+1}),false);
+});
+test('HEIC and HEIF photos are detected from MIME type or filename',()=>{
+ assert.equal(isHeicFile({name:'IMG_1001',type:'image/heic'}),true);
+ assert.equal(isHeicFile({name:'IMG_1002.HEIF',type:''}),true);
+ assert.equal(isHeicFile({name:'photo.jpg',type:'image/jpeg'}),false);
 });
