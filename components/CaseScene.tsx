@@ -28,7 +28,9 @@ async function paint(canvas:HTMLCanvasElement,d:Customization,selected:string|un
  ctx.shadowColor='rgba(20,24,28,.36)';ctx.shadowBlur=34;ctx.shadowOffsetX=view==='Left'?-13:13;ctx.shadowOffsetY=22;rounded(ctx,f.x-5,f.y-5,f.w+10,f.h+10,radius+8);ctx.fillStyle='rgba(187,198,204,.28)';ctx.fill();ctx.shadowColor='transparent';
  ctx.drawImage(layers.base,f.x,f.y,f.w,f.h);
  ctx.save();rounded(ctx,f.x,f.y,f.w,f.h,radius);ctx.clip();
- if(c.photorealistic){ctx.globalCompositeOperation='multiply';ctx.globalAlpha=.92}
+ // Artwork is the printed surface: keep it above the opaque phone/base image.
+ // The transparent shadow, case lip and gloss layers below provide material depth.
+ ctx.globalCompositeOperation='source-over';ctx.globalAlpha=1;
  ctx.drawImage(art,f.x,f.y,f.w,f.h);ctx.restore();
  ctx.drawImage(layers.shadow,f.x,f.y,f.w,f.h);
  ctx.drawImage(layers.caseOverlay,f.x,f.y,f.w,f.h);

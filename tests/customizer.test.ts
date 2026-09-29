@@ -44,6 +44,12 @@ test('mobile preview decode can fall back to the retained original image',()=>{
  assert.deepEqual(imageSourceCandidates(layer,true),['original-data-url','preview-data-url']);
  assert.deepEqual(imageSourceCandidates({src:'same',originalSrc:'same'}),['same']);
 });
+test('case preview composites artwork above the opaque base and below transparent material overlays',()=>{
+ const source=readFileSync(join(process.cwd(),'components','CaseScene.tsx'),'utf8');
+ const base=source.indexOf('ctx.drawImage(layers.base'),art=source.indexOf('ctx.drawImage(art'),shadow=source.indexOf('ctx.drawImage(layers.shadow'),caseOverlay=source.indexOf('ctx.drawImage(layers.caseOverlay'),highlight=source.indexOf('ctx.drawImage(layers.highlight');
+ assert.ok(base>=0&&base<art&&art<shadow&&shadow<caseOverlay&&caseOverlay<highlight);
+ assert.match(source,/globalCompositeOperation='source-over';ctx\.globalAlpha=1/);
+});
 test('phone models use their matching 2.5D camera geometry',()=>{
  assert.equal(modelConfig('iphone-15').cameraLayout,'dual-diagonal');
  assert.equal(modelConfig('iphone-16').cameraLayout,'dual-vertical');
