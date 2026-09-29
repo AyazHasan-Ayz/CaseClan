@@ -39,6 +39,7 @@ test('storefront reads Supabase first and retains the existing catalog as a safe
   const catalog = read('lib/supabase/catalog.ts');
   assert.match(provider, /from '@\/lib\/catalog'/);
   assert.match(provider, /fetchRemoteCatalog/);
+  assert.match(provider, /catalogSource='supabase'/);
   assert.match(catalog, /createSupabaseBrowserClient/);
   assert.match(catalog, /from\('products'\)/);
   assert.match(catalog, /if \(!productsResult\.data\?\.length \|\| !modelsResult\.data\?\.length\) return null/);
