@@ -43,3 +43,7 @@
  .editor-mode button{font-size:10px}.editor-mode label{font-size:10px;padding-inline:4px}
  .editor-tools{padding-inline:3px}.editor-tools button{font-size:10px}
 }
+
+.editor-mode-label{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;letter-spacing:.04em}.editor-purchase{display:grid;grid-template-columns:1fr;gap:8px;margin:12px auto 0;max-width:620px}.editor-purchase>p{display:flex;justify-content:space-between;align-items:center;margin:0;padding:10px 2px;border-top:1px solid #d6d6d6;font-size:13px}.editor-purchase .button{display:flex;justify-content:center;gap:7px}.purchase-confirmation{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#eaf4ec;color:#174d28;border:1px solid #c7e3cd;border-radius:5px;font-size:12px}.purchase-confirmation span{font-weight:700;margin-right:auto}.purchase-confirmation a,.purchase-confirmation button{text-decoration:underline;background:none;border:0;color:inherit;font-size:11px}.editor-mode{min-height:38px}.view-controls{display:none!important}
+@media(max-width:767px){.editor-purchase{grid-template-columns:1fr;gap:7px}.editor-purchase .button{font-size:10px;padding-inline:8px}.purchase-confirmation{flex-wrap:wrap}.studio-step-2 .editor-stage .case-scene{height:min(56vh,500px)}}
+@media(max-width:360px){.studio-step-2 .editor-stage .case-scene{height:min(54vh,455px)}}

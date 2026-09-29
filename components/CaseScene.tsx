@@ -3,29 +3,28 @@
 import {PointerEvent as ReactPointerEvent,useCallback,useEffect,useRef,useState} from 'react';
 import {Customization,Layer,constrainLayer,hitLayer,modelConfig,renderArtwork} from '@/lib/customizer';
 
-type Props={design:Customization;selected?:string;guides?:boolean;editing?:boolean;view?:string;onSelect?:(id:string)=>void;onMove?:(layer:Layer,commit:boolean)=>void;onCapture?:(capture:()=>string)=>void};
-type Frame={x:number;y:number;w:number;h:number;angle:number;skew:number};
+type Props={design:Customization;selected?:string;guides?:boolean;editing?:boolean;onSelect?:(id:string)=>void;onMove?:(layer:Layer,commit:boolean)=>void;onCapture?:(capture:()=>string)=>void};
+type Frame={x:number;y:number;w:number;h:number};
 type MockupLayers={base:HTMLImageElement;caseOverlay:HTMLImageElement;highlight:HTMLImageElement;shadow:HTMLImageElement};
 
-const VIEW:Record<string,{angle:number;skew:number;scale:number}>={Front:{angle:0,skew:0,scale:1},Angle:{angle:-.045,skew:-.10,scale:.96},Left:{angle:.035,skew:.09,scale:.95},Right:{angle:-.035,skew:-.09,scale:.95},Top:{angle:-.018,skew:-.04,scale:.92},Bottom:{angle:.018,skew:.04,scale:.92}};
 const assetCache=new Map<string,Promise<HTMLImageElement>>();
 
 function rounded(ctx:CanvasRenderingContext2D,x:number,y:number,w:number,h:number,r:number){ctx.beginPath();ctx.roundRect(x,y,w,h,Math.min(r,w/2,h/2))}
-function layout(size:{width:number;height:number},design:Customization,view:string):Frame{const p=VIEW[view]||VIEW.Front,c=modelConfig(design.device),mobile=size.width<600,maxH=size.height*(mobile ? .9 : .79),maxW=size.width*(mobile ? .76 : .48),ratio=c.width/c.height,h=Math.min(maxH,maxW/ratio)*p.scale,w=h*ratio;return {x:(size.width-w)/2,y:(size.height-h)/2-(mobile?0:6),w,h,angle:p.angle,skew:p.skew}}
+function layout(size:{width:number;height:number},design:Customization):Frame{const c=modelConfig(design.device),mobile=size.width<600,maxH=size.height*(mobile ? .94 : .79),maxW=size.width*(mobile ? .88 : .48),ratio=c.width/c.height,h=Math.min(maxH,maxW/ratio),w=h*ratio;return {x:(size.width-w)/2,y:(size.height-h)/2-(mobile?0:6),w,h}}
 function loadAsset(src:string){if(!assetCache.has(src))assetCache.set(src,new Promise((resolve,reject)=>{const image=new Image();image.onload=()=>resolve(image);image.onerror=()=>reject(new Error(`Unable to load ${src}`));image.src=src}));return assetCache.get(src)!}
 async function loadMockup(device:string):Promise<MockupLayers>{const a=modelConfig(device).assets;const [base,caseOverlay,highlight,shadow]=await Promise.all([loadAsset(a.base),loadAsset(a.caseOverlay),loadAsset(a.highlightOverlay),loadAsset(a.shadowOverlay)]);return {base,caseOverlay,highlight,shadow}}
 
-async function paint(canvas:HTMLCanvasElement,d:Customization,selected:string|undefined,guides:boolean,view:string,isCurrent:()=>boolean=()=>true){
+async function paint(canvas:HTMLCanvasElement,d:Customization,selected:string|undefined,guides:boolean,isCurrent:()=>boolean=()=>true){
  const dpr=Math.min(2,window.devicePixelRatio||1),cssW=Math.max(1,canvas.clientWidth||720),cssH=Math.max(1,canvas.clientHeight||820),pixelW=Math.round(cssW*dpr),pixelH=Math.round(cssH*dpr),buffer=document.createElement('canvas');
  buffer.width=pixelW;buffer.height=pixelH;
  const ctx=buffer.getContext('2d')!;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,cssW,cssH);
- const [art,layers]=await Promise.all([renderArtwork(d,1000,guides,selected),loadMockup(d.device)]),f=layout({width:cssW,height:cssH},d,view),c=modelConfig(d.device),radius=c.cornerRadius*f.w/1000;
+ const [art,layers]=await Promise.all([renderArtwork(d,1000,guides,selected),loadMockup(d.device)]),f=layout({width:cssW,height:cssH},d),c=modelConfig(d.device),radius=c.cornerRadius*f.w/1000;
  const bg=ctx.createLinearGradient(0,0,0,cssH);bg.addColorStop(0,'#f4f3f1');bg.addColorStop(.67,'#dedcd8');bg.addColorStop(.68,'#d0ceca');bg.addColorStop(1,'#e8e6e2');ctx.fillStyle=bg;ctx.fillRect(0,0,cssW,cssH);
  const halo=ctx.createRadialGradient(cssW*.39,cssH*.25,5,cssW*.47,cssH*.42,cssW*.58);halo.addColorStop(0,'rgba(255,255,255,.98)');halo.addColorStop(.56,'rgba(255,255,255,.24)');halo.addColorStop(1,'rgba(255,255,255,0)');ctx.fillStyle=halo;ctx.fillRect(0,0,cssW,cssH);
  ctx.save();ctx.filter='blur(28px)';ctx.fillStyle='rgba(32,37,40,.13)';ctx.beginPath();ctx.ellipse(f.x-f.w*.03,f.y+f.h*.39,f.w*.36,f.h*.29,-.08,0,Math.PI*2);ctx.fill();ctx.restore();
  ctx.save();ctx.filter='blur(20px)';ctx.fillStyle='rgba(18,22,25,.30)';ctx.beginPath();ctx.ellipse(cssW*.51,f.y+f.h+24,f.w*.72,19,-.03,0,Math.PI*2);ctx.fill();ctx.restore();
- ctx.save();ctx.translate(cssW/2,cssH/2);ctx.rotate(f.angle);ctx.transform(1,0,f.skew,1,0,0);ctx.translate(-cssW/2,-cssH/2);
- ctx.shadowColor='rgba(20,24,28,.36)';ctx.shadowBlur=34;ctx.shadowOffsetX=view==='Left'?-13:13;ctx.shadowOffsetY=22;rounded(ctx,f.x-5,f.y-5,f.w+10,f.h+10,radius+8);ctx.fillStyle='rgba(187,198,204,.28)';ctx.fill();ctx.shadowColor='transparent';
+ ctx.save();
+ ctx.shadowColor='rgba(20,24,28,.36)';ctx.shadowBlur=34;ctx.shadowOffsetX=13;ctx.shadowOffsetY=22;rounded(ctx,f.x-5,f.y-5,f.w+10,f.h+10,radius+8);ctx.fillStyle='rgba(187,198,204,.28)';ctx.fill();ctx.shadowColor='transparent';
  ctx.drawImage(layers.base,f.x,f.y,f.w,f.h);
  ctx.save();rounded(ctx,f.x,f.y,f.w,f.h,radius);ctx.clip();
  // Artwork is the printed surface: keep it above the opaque phone/base image.
@@ -46,12 +45,14 @@ async function paint(canvas:HTMLCanvasElement,d:Customization,selected:string|un
 
 export default function CaseScene(props:Props){
  const canvas=useRef<HTMLCanvasElement>(null),renderVersion=useRef(0),gesture=useRef<{layer:Layer;latest:Layer;mode:'move'|'scale'|'pinch';x:number;y:number;distance?:number;midX?:number;midY?:number}|null>(null),pointers=useRef(new Map<number,{x:number;y:number}>()),[loading,setLoading]=useState(true);
- const redraw=useCallback(()=>{const el=canvas.current;if(!el)return;const version=++renderVersion.current;paint(el,props.design,props.selected,!!props.guides,props.view||'Front',()=>version===renderVersion.current&&canvas.current===el).then(committed=>{if(committed)setLoading(false);else if(version===renderVersion.current)requestAnimationFrame(redraw)}).catch(()=>{if(version===renderVersion.current)setLoading(false)})},[props.design,props.selected,props.guides,props.view]);
+ const redraw=useCallback(()=>{const el=canvas.current;if(!el)return;const version=++renderVersion.current;paint(el,props.design,props.selected,!!props.guides,()=>version===renderVersion.current&&canvas.current===el).then(committed=>{if(committed)setLoading(false);else if(version===renderVersion.current)requestAnimationFrame(redraw)}).catch(()=>{if(version===renderVersion.current)setLoading(false)})},[props.design,props.selected,props.guides]);
  useEffect(()=>{redraw();const el=canvas.current;if(!el)return;const observer=new ResizeObserver(redraw),resume=()=>{if(document.visibilityState==='visible')requestAnimationFrame(redraw)};observer.observe(el);window.addEventListener('pageshow',resume);window.addEventListener('resize',resume);document.addEventListener('visibilitychange',resume);return()=>{renderVersion.current++;observer.disconnect();window.removeEventListener('pageshow',resume);window.removeEventListener('resize',resume);document.removeEventListener('visibilitychange',resume)}},[redraw]);
- useEffect(()=>{props.onCapture?.(()=>canvas.current?.toDataURL('image/webp',.9)||'')},[props.onCapture,props.design,props.view]);
- const pointFromClient=(clientX:number,clientY:number)=>{const el=canvas.current!,rect=el.getBoundingClientRect(),f=layout({width:rect.width,height:rect.height},props.design,props.view||'Front');return {x:(clientX-rect.left-f.x)/f.w*1000,y:(clientY-rect.top-f.y)/f.h*2000}};
+ useEffect(()=>{props.onCapture?.(()=>canvas.current?.toDataURL('image/webp',.9)||'')},[props.onCapture,props.design]);
+ const pointFromClient=(clientX:number,clientY:number)=>{const el=canvas.current!,rect=el.getBoundingClientRect(),f=layout({width:rect.width,height:rect.height},props.design);return {x:(clientX-rect.left-f.x)/f.w*1000,y:(clientY-rect.top-f.y)/f.h*2000}};
  const down=(e:ReactPointerEvent<HTMLCanvasElement>)=>{if(!props.editing)return;const p=pointFromClient(e.clientX,e.clientY);pointers.current.set(e.pointerId,p);e.currentTarget.setPointerCapture(e.pointerId);if(pointers.current.size===2){const points=[...pointers.current.values()],selectedLayer=props.design.layers.find(item=>item.id===props.selected&&item.type==='image'&&!item.locked),base=gesture.current?.latest||selectedLayer;if(base){const distance=Math.hypot(points[1].x-points[0].x,points[1].y-points[0].y),midX=(points[0].x+points[1].x)/2,midY=(points[0].y+points[1].y)/2;gesture.current={layer:base,latest:base,mode:'pinch',x:0,y:0,distance,midX,midY};props.onSelect?.(base.id)}return}const layer=hitLayer(props.design.layers,p.x,p.y);if(!layer||layer.locked)return;props.onSelect?.(layer.id);const scale=Math.abs(p.x-layer.x)>layer.width*.36&&Math.abs(p.y-layer.y)>layer.height*.3;gesture.current={layer,x:p.x,y:p.y,latest:layer,mode:scale?'scale':'move'}};
  const move=(e:ReactPointerEvent<HTMLCanvasElement>)=>{if(!props.editing||!pointers.current.has(e.pointerId))return;const p=pointFromClient(e.clientX,e.clientY);pointers.current.set(e.pointerId,p);const state=gesture.current;if(!state)return;if(state.mode==='pinch'&&pointers.current.size>=2){const points=[...pointers.current.values()],distance=Math.hypot(points[1].x-points[0].x,points[1].y-points[0].y),midX=(points[0].x+points[1].x)/2,midY=(points[0].y+points[1].y)/2,factor=Math.max(.15,distance/(state.distance||distance)),next=constrainLayer({...state.layer,width:state.layer.width*factor,height:state.layer.height*factor,x:state.layer.x+midX-(state.midX||midX),y:state.layer.y+midY-(state.midY||midY)},props.design.device);state.latest=next;props.onMove?.(next,false);return}if(pointers.current.size!==1)return;const next=constrainLayer(state.mode==='scale'?{...state.layer,width:Math.max(70,Math.abs(p.x-state.layer.x)*2),height:Math.max(50,Math.abs(p.y-state.layer.y)*2)}:{...state.layer,x:state.layer.x+p.x-state.x,y:state.layer.y+p.y-state.y},props.design.device);state.latest=next;props.onMove?.(next,false)};
  const up=(e:ReactPointerEvent<HTMLCanvasElement>)=>{pointers.current.delete(e.pointerId);try{e.currentTarget.releasePointerCapture(e.pointerId)}catch{}const state=gesture.current;if(!state)return;if(state.mode==='pinch'&&pointers.current.size>=2)return;props.onMove?.(state.latest,true);gesture.current=null};
  return <div className="case-scene realistic-mockup" aria-label={`Realistic ${props.design.device} phone case preview`}><canvas ref={canvas} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up}/>{loading&&<p className="scene-loading">Compositing your case…</p>}<span className="mockup-badge">2.5D PRODUCT PREVIEW</span></div>
 }
+
+
