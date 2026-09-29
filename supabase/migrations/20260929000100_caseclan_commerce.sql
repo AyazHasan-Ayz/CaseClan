@@ -1,5 +1,4 @@
--- Prepared only. Do not apply until CASECLAN's Supabase project and secret-key
--- connection have both been verified.
+-- CASECLAN commerce schema, RLS policies, and storage buckets.
 
 create schema if not exists private;
 revoke all on schema private from public, anon, authenticated;

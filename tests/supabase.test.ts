@@ -22,8 +22,8 @@ test('secret-key client is isolated from the browser module', () => {
   assert.doesNotMatch(index, /server|AdminClient|SECRET/);
 });
 
-test('prepared migration is non-destructive and protects every commerce table with RLS', () => {
-  const migration = read('supabase/migrations/202609290001_caseclan_commerce.sql');
+test('commerce migration is non-destructive and protects every table with RLS', () => {
+  const migration = read('supabase/migrations/20260929000100_caseclan_commerce.sql');
   const tables = ['products','product_images','phone_models','product_phone_models','customers','addresses','orders','order_items','customizations','coupons','reviews','store_settings'];
   for (const table of tables) {
     assert.match(migration, new RegExp(`create table public\\.${table}\\b`));
@@ -34,8 +34,15 @@ test('prepared migration is non-destructive and protects every commerce table wi
   assert.match(migration, /No client write policies exist for public catalog assets or print-ready files/);
 });
 
-test('existing catalog remains the storefront source until migration is authorized', () => {
+test('storefront reads Supabase first and retains the existing catalog as a safe fallback', () => {
   const provider = read('components/StoreProvider.tsx');
+  const catalog = read('lib/supabase/catalog.ts');
   assert.match(provider, /from '@\/lib\/catalog'/);
-  assert.doesNotMatch(provider, /createSupabaseBrowserClient|from '@\/lib\/supabase/);
+  assert.match(provider, /fetchRemoteCatalog/);
+  assert.match(catalog, /createSupabaseBrowserClient/);
+  assert.match(catalog, /from\('products'\)/);
+  assert.match(catalog, /if \(!productsResult\.data\?\.length \|\| !modelsResult\.data\?\.length\) return null/);
+  const seed = read('supabase/migrations/20260929000200_seed_caseclan_catalog.sql');
+  assert.match(seed, /on conflict \(slug\) do nothing/);
+  assert.doesNotMatch(seed, /\b(delete|truncate|drop)\b/i);
 });
