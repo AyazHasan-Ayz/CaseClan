@@ -1,0 +1,16 @@
+
+> caseclan@1.0.0 dev
+> next dev --hostname 0.0.0.0 -p 3011
+
+   ▲ Next.js 15.5.25
+   - Local:        http://localhost:3011
+   - Network:      http://0.0.0.0:3011
+
+ ✓ Starting...
+ ✓ Ready in 11.4s
+ ○ Compiling /customize ...
+ ✓ Compiled /customize in 21.2s (739 modules)
+ GET /customize/?device=iphone-17 200 in 24037ms
+ GET /customize/?device=iphone-17 200 in 387ms
+ ✓ Compiled in 695ms (296 modules)
+ GET /customize/?device=iphone-17 200 in 113ms
