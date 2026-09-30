@@ -23,4 +23,14 @@ test('auth routes and database-enforced checkout are present',()=>{
   assert.match(sql,/create or replace function public\.place_order/);
   assert.match(sql,/revoke insert, update on public\.customers from authenticated/);
   assert.match(sql,/role in \('customer', 'owner', 'admin', 'staff'\)/);
+  assert.match(sql,/revoke all on function public\.place_order\(jsonb\) from public, anon/);
+  const guard=fs.readFileSync('components/AuthGuard.tsx','utf8');
+  assert.match(guard,/router\.replace\(loginHref\(next\)\)/);
+  const checkout=fs.readFileSync('components/Account.tsx','utf8');
+  assert.match(checkout,/if\(!auth\.user\).*loginHref\('\/checkout\/'\)/s);
+  const oauth=fs.readFileSync('components/AuthProvider.tsx','utf8');
+  assert.match(oauth,/signInWithOAuth\(\{provider:'google'/);
+  const pages=fs.readFileSync('components/AuthPages.tsx','utf8');
+  assert.match(pages,/CONTINUE WITH GOOGLE/);
+  assert.match(pages,/safeNextPath\(params\.get\('next'\)/);
 });
