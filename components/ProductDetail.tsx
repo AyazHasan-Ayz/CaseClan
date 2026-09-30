@@ -7,14 +7,16 @@ import {ArrowRight,Check,Heart,LockKeyhole,Minus,Plus,ShieldCheck,Truck} from 'l
 import {Product,defaultDevice,deviceName,money,productImage} from '@/lib/catalog';
 import {productPrice} from '@/lib/admin';
 import {useStore} from './StoreProvider';
+import {useAuth} from './AuthProvider';
+import {loginHref} from '@/lib/auth';
 
 export default function ProductDetail({product:initialProduct}:{product:Product}){
- const store=useStore(),router=useRouter(),initialized=useRef(false),p=store.adminData.products.find(item=>item.id===initialProduct.id)||initialProduct;
+ const store=useStore(),auth=useAuth(),router=useRouter(),initialized=useRef(false),p=store.adminData.products.find(item=>item.id===initialProduct.id)||initialProduct;
  const [device,setDevice]=useState(()=>store.selectedDevice&&p.devices.includes(store.selectedDevice)?store.selectedDevice:defaultDevice(p)),[quantity,setQuantity]=useState(1);
  useEffect(()=>{if(!store.ready||initialized.current)return;initialized.current=true;const query=new URLSearchParams(window.location.search).get('device');const next=query&&p.devices.includes(query)?query:store.selectedDevice&&p.devices.includes(store.selectedDevice)?store.selectedDevice:defaultDevice(p);setDevice(next);store.setSelectedDevice(next)},[p,store.ready]);
  const choose=(next:string)=>{initialized.current=true;setDevice(next);store.setSelectedDevice(next)};
  const price=productPrice(p,device),supportedDevices=p.devices.filter(slug=>store.adminData.devices.some(item=>item.slug===slug&&item.active!==false&&item.available!==false));
- const add=(buy=false)=>{store.add(p,device,p.colors[0],undefined,quantity);if(buy){store.setDrawer(false);router.push('/checkout/')}};
+ const add=(buy=false)=>{store.add(p,device,p.colors[0],undefined,quantity);if(buy){store.setDrawer(false);router.push(auth.user?'/checkout/':loginHref('/checkout/'))}};
  return <>
   <div className="product-page">
    <p className="breadcrumbs"><Link href="/">Home</Link><span>/</span><Link href="/ready-designs/">Ready Designs</Link><span>/</span>{p.name}</p>

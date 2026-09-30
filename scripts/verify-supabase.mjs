@@ -46,8 +46,16 @@ assert.deepEqual(privateSetting.body, [], 'Private settings must be filtered by 
 const privateOrders = await rest('orders?select=id&limit=1');
 assert.ok([401, 403].includes(privateOrders.status), `Anonymous orders read should be denied, received ${privateOrders.status}.`);
 
+const anonymousCheckout = await fetch(`${url}/rest/v1/rpc/place_order`, {
+  method: 'POST',
+  headers: { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+  body: JSON.stringify({ payload: { items: [] } }),
+});
+assert.ok([401, 403].includes(anonymousCheckout.status), `Anonymous checkout should be denied, received ${anonymousCheckout.status}.`);
+
 console.log(`Remote public products: ${products.body.length}`);
 console.log(`Remote public phone models: ${models.body.length}`);
 console.log('Public catalog reads: passed');
 console.log('Private row filtering: passed');
 console.log(`Anonymous orders read: blocked (HTTP ${privateOrders.status})`);
+console.log(`Anonymous checkout RPC: blocked (HTTP ${anonymousCheckout.status})`);

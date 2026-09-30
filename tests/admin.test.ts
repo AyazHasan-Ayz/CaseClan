@@ -31,11 +31,12 @@ test('model-specific price overrides the default product price',()=>{
  assert.equal(productPrice(product,'iphone-15'),1299);
 });
 
-test('admin routes are excluded from robots and use an access gate without a default secret',()=>{
+test('admin routes are excluded from robots and require a Supabase staff role',()=>{
  const robots=readFileSync(join(process.cwd(),'app','robots.ts'),'utf8'),admin=readFileSync(join(process.cwd(),'components','AdminApp.tsx'),'utf8');
  assert.match(robots,/['\"]\/admin\/['\"]/);
- assert.match(admin,/caseclan-admin-session/);
- assert.match(admin,/crypto\.subtle\.digest/);
+ assert.match(admin,/isAdminRole\(auth\.customer\?\.role\)/);
+ assert.match(admin,/\/admin\/login/);
+ assert.doesNotMatch(admin,/caseclan-admin-session|caseclan-admin-pin|crypto\.subtle\.digest/);
  assert.doesNotMatch(admin,/defaultPassword|admin123|password\s*=/i);
 });
 

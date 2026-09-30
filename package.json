@@ -6,7 +6,7 @@
     "dev": "next dev --hostname 0.0.0.0",
     "build": "next build",
     "start": "node scripts/serve.mjs",
-    "test": "node --experimental-strip-types --test tests/membership.test.ts tests/cart.test.ts tests/customizer.test.ts tests/catalog.test.ts tests/seo.test.ts tests/admin.test.ts tests/supabase.test.ts",
+    "test": "node --experimental-strip-types --test tests/membership.test.ts tests/cart.test.ts tests/customizer.test.ts tests/catalog.test.ts tests/seo.test.ts tests/admin.test.ts tests/supabase.test.ts tests/auth.test.ts",
     "check:seo": "node scripts/check-seo.mjs",
     "check:supabase": "node scripts/check-supabase.mjs",
     "verify:supabase": "node scripts/verify-supabase.mjs"

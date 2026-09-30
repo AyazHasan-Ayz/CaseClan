@@ -3,7 +3,7 @@ import {devices,products} from '@/lib/catalog';
 import {CartPage,SearchPage} from '@/components/UtilityPages';
 import Shop from '@/components/Shop';
 import InfoPages from '@/components/InfoPages';
-import Account,{Wishlist,Checkout,Login} from '@/components/Account';
+import {Wishlist} from '@/components/Account';
 import {AboutPage,FAQPage,PolicyPage,TrackOrderPage,ContactPage} from '@/components/CustomerPages';
 import SeoLanding,{isSeoLanding} from '@/components/SeoLanding';
 import JsonLd from '@/components/seo/JsonLd';
@@ -11,8 +11,8 @@ import {faqGroups} from '@/lib/seo/content';
 import {pageMetadata} from '@/lib/seo/metadata';
 import {breadcrumbSchema,collectionSchema,faqSchema,pageSchema} from '@/lib/seo/schemas';
 
-const pages=['sustainability','careers','press','cart','search','personalized','ready-designs','custom-upload','coming-soon','shop','iphone','samsung','new-drops','devices','clans','collections','our-story','about','faq','faqs','size-guide','track-order','returns','returns-policy','shipping-policy','contact','privacy','privacy-policy','terms','wishlist','login','account','checkout','design-your-own','personalized-phone-covers','custom-phone-cases','custom-photo-cases','design-your-own-phone-case'];
-const privatePages=new Set(['cart','search','track-order','wishlist','login','account','checkout']);
+const pages=['sustainability','careers','press','cart','search','personalized','ready-designs','custom-upload','coming-soon','shop','iphone','samsung','new-drops','devices','clans','collections','our-story','about','faq','faqs','size-guide','track-order','returns','returns-policy','shipping-policy','contact','privacy','privacy-policy','terms','wishlist','design-your-own','personalized-phone-covers','custom-phone-cases','custom-photo-cases','design-your-own-phone-case'];
+const privatePages=new Set(['cart','search','track-order','wishlist']);
 const seoTitles:Record<string,[string,string,string]>= {
  shop:['Phone Cases & Ready Designs | CASECLAN','Shop premium CASECLAN phone cases with fixed artwork for supported flagship phones.','/shop/'],
  'ready-designs':['Ready-Design Phone Cases | CASECLAN','Shop curated CASECLAN artwork exactly as shown, fitted to your selected phone model.','/ready-designs/'],
@@ -53,7 +53,7 @@ export default async function Page({params}:{params:Promise<{slug:string}>}){
  if(slug==='iphone'||slug==='samsung'){const name=slug==='iphone'?'iPhone':'Samsung',items=products.filter(product=>product.kind==='ready'&&product.devices.some(id=>devices.find(item=>item.slug===id)?.brand===name));return <><JsonLd data={[collectionSchema(`${name} Phone Cases`,`/collections/${slug}/`,items),breadcrumbSchema([{name:'Home',path:'/'},{name:`${name} Cases`,path:`/collections/${slug}/`}])]}/><Shop brand={name}/></>}
  if(slug==='custom-upload'||slug==='design-your-own')return <InfoPages slug="design-your-own"/>;
  if(isSeoLanding(slug))return <SeoLanding slug={slug}/>;
- if(slug==='login')return <Login/>;if(slug==='account')return <Account/>;if(slug==='wishlist')return <Wishlist/>;if(slug==='checkout')return <Checkout/>;
+ if(slug==='wishlist')return <Wishlist/>;
  if(slug==='about'||slug==='our-story')return <><JsonLd data={pageSchema('AboutPage','About CASECLAN','/about/','CASECLAN creates premium ready-design and custom phone cases.')}/><AboutPage/></>;
  if(slug==='faq'||slug==='faqs')return <><JsonLd data={faqSchema(faqGroups)}/><FAQPage/></>;
  if(slug==='track-order')return <TrackOrderPage/>;
