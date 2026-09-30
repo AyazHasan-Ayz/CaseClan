@@ -32,5 +32,8 @@ test('auth routes and database-enforced checkout are present',()=>{
   assert.match(oauth,/signInWithOAuth\(\{provider:'google'/);
   const pages=fs.readFileSync('components/AuthPages.tsx','utf8');
   assert.match(pages,/CONTINUE WITH GOOGLE/);
+  assert.match(pages,/GoogleIcon/);
+  assert.doesNotMatch(pages,/Email or phone/i);
+  assert.ok(pages.indexOf('<form onSubmit={submit}>') < pages.indexOf('CONTINUE WITH GOOGLE'));
   assert.match(pages,/safeNextPath\(params\.get\('next'\)/);
 });

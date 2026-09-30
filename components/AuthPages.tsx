@@ -6,6 +6,8 @@ import {useRouter,useSearchParams} from 'next/navigation';
 import {safeNextPath} from '@/lib/auth';
 import {useAuth} from './AuthProvider';
 
+function GoogleIcon(){return <svg aria-hidden="true" viewBox="0 0 24 24" width="19" height="19"><path fill="#4285F4" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.8 3-4.3 3-7.4Z"/><path fill="#34A853" d="M12 22c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1a5.8 5.8 0 0 1-5.5-4H3.2v2.6A10 10 0 0 0 12 22Z"/><path fill="#FBBC05" d="M6.5 14.1a6 6 0 0 1 0-4.2V7.3H3.2a10 10 0 0 0 0 9.4l3.3-2.6Z"/><path fill="#EA4335" d="M12 5.9c1.5 0 2.9.5 4 1.5l3-3A10 10 0 0 0 3.2 7.3l3.3 2.6A5.8 5.8 0 0 1 12 5.9Z"/></svg>}
+
 export function AuthForm({mode,showGoogle=true}:{mode:'login'|'signup'|'forgot';showGoogle?:boolean}){
   const auth=useAuth(),router=useRouter(),params=useSearchParams();
   const next=safeNextPath(params.get('next'),'/account/');
@@ -23,7 +25,6 @@ export function AuthForm({mode,showGoogle=true}:{mode:'login'|'signup'|'forgot';
   return <>
     <div className="page-intro auth-intro"><p className="eyebrow">YOUR CASECLAN ACCOUNT</p><h1>{heading}</h1><p>{mode==='forgot'?'We will email you a secure reset link.':'Your cart and custom design stay on this device while you sign in.'}</p></div>
     <section className="auth-card">
-      {mode!=='forgot'&&showGoogle&&<><button type="button" disabled={busy} className="button outline wide google-auth" onClick={()=>void google()}><span aria-hidden="true">G</span> CONTINUE WITH GOOGLE</button><div className="auth-divider"><span>or use email</span></div></>}
       <form onSubmit={submit}>
         {mode==='signup'&&<label className="field-label">Full name<input required autoComplete="name" value={name} onChange={e=>setName(e.target.value)}/></label>}
         <label className="field-label">Email<input required type="email" autoComplete="email" value={email} onChange={e=>setEmail(e.target.value)}/></label>
@@ -31,7 +32,10 @@ export function AuthForm({mode,showGoogle=true}:{mode:'login'|'signup'|'forgot';
         <button disabled={busy} className="button wide">{busy?'PLEASE WAIT…':mode==='login'?'LOGIN':mode==='signup'?'CREATE ACCOUNT':'SEND RESET LINK'}</button>
       </form>
       {notice&&<p className="form-note" role="status">{notice}</p>}
-      <div className="auth-links">{mode!=='forgot'&&<Link href={`/forgot-password/?next=${encodeURIComponent(next)}`}>Forgot password</Link>}{mode!=='signup'&&<Link href={`/signup/?next=${encodeURIComponent(next)}`}>Create account</Link>}{mode!=='login'&&<Link href={`/login/?next=${encodeURIComponent(next)}`}>Back to login</Link>}</div>
+      {mode==='login'&&<div className="auth-links"><Link href={`/forgot-password/?next=${encodeURIComponent(next)}`}>Forgot Password</Link><Link href={`/signup/?next=${encodeURIComponent(next)}`}>Sign Up</Link></div>}
+      {mode==='forgot'&&<div className="auth-links auth-links-centered"><Link href={`/login/?next=${encodeURIComponent(next)}`}>Back to login</Link></div>}
+      {mode!=='forgot'&&showGoogle&&<><div className="auth-divider"><span>OR</span></div><button type="button" disabled={busy} className="button outline wide google-auth" onClick={()=>void google()}><GoogleIcon/> CONTINUE WITH GOOGLE</button></>}
+      {mode==='signup'&&<div className="auth-links auth-links-centered"><Link href={`/login/?next=${encodeURIComponent(next)}`}>Already have an account? Log in</Link></div>}
     </section>
   </>
 }
