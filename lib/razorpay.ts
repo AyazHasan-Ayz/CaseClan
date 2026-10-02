@@ -8,7 +8,18 @@ type RazorpayFailure={error?:{code?:string;description?:string;reason?:string;me
 type RazorpayInstance={open:()=>void;on:(event:'payment.failed',handler:(response:RazorpayFailure)=>void)=>void};
 declare global{interface Window{Razorpay?:new(options:Record<string,unknown>)=>RazorpayInstance}}
 
-async function invoke<T>(name:string,body:Record<string,unknown>){const{data,error}=await createSupabaseBrowserClient().functions.invoke(name,{body});if(error)throw new Error(error.message);if(data?.error)throw new Error(data.error);return data as T}
+async function invoke<T>(name:string,body:Record<string,unknown>){
+ const{data,error}=await createSupabaseBrowserClient().functions.invoke(name,{body});
+ if(error){
+  let message=error.message;
+  const response=(error as {context?:Response}).context;
+  if(response){
+   try{const payload=await response.clone().json() as {error?:string};if(payload.error)message=payload.error}catch{}
+  }
+  throw new Error(message);
+ }
+ if(data?.error)throw new Error(data.error);return data as T
+}
 export const createRazorpayCheckout=(orderId:string)=>invoke<RazorpayCheckoutSession>('razorpay-checkout',{orderId,kind:'razorpay'});
 export const confirmCodOrder=(orderId:string)=>invoke<{caseclanOrderId:string;caseclanOrderNumber:string;status:string;paymentStatus:string}>('razorpay-checkout',{orderId,kind:'cod'});
 export const verifyRazorpayPayment=(response:RazorpaySuccess)=>invoke<{orderId:string;status:string;verifiedAt?:string}>('razorpay-verify',response);
@@ -23,4 +34,3 @@ export async function openRazorpayCheckout(session:RazorpayCheckoutSession,custo
 }
 
 export async function payExistingOrder(orderId:string,customer:CustomerProfile,onFailure?:(message:string)=>void){const session=await createRazorpayCheckout(orderId);try{const response=await openRazorpayCheckout(session,customer,onFailure);const verified=await verifyRazorpayPayment(response);return{session,response,verified}}catch(error){if(error instanceof Error&&error.message==='Payment checkout was closed.')await recordRazorpayStatus(session.providerOrderId,'cancelled').catch(()=>undefined);throw error}}
-
