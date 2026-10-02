@@ -47,3 +47,30 @@ test('storefront reads Supabase first and retains the existing catalog as a safe
   assert.match(seed, /on conflict \(slug\) do nothing/);
   assert.doesNotMatch(seed, /\b(delete|truncate|drop)\b/i);
 });
+
+test('manual fulfilment migration is staff-only and stores private custom production assets', () => {
+  const migration = read('supabase/migrations/20261002000100_manual_fulfilment.sql');
+  assert.match(migration, /grant update \(status, tracking_id, courier, admin_note, metadata\) on public\.orders to authenticated/);
+  assert.match(migration, /create policy orders_admin_update_fulfilment/);
+  assert.match(migration, /private\.current_user_role\(\).*'owner', 'admin', 'staff'/s);
+  for (const operation of ['select', 'insert', 'update']) {
+    assert.match(migration, new RegExp(`print_ready_.+ on storage\\.objects for ${operation}`, 's'));
+  }
+  assert.match(migration, /split_part\(print_value, '\/', 1\) <> account_id::text/);
+  assert.match(migration, /customer_upload_paths, preview_path, print_ready_path/);
+  assert.match(migration, /'fulfilment_provider', 'Qikink'/);
+});
+
+test('admin and customer surfaces expose the manual fulfilment workflow', () => {
+  const admin = read('components/AdminApp.tsx');
+  const tracking = read('components/OrderTrackingSummary.tsx');
+  const remote = read('lib/supabase/admin-orders.ts');
+  assert.match(admin, /SAVE FULFILMENT DETAILS/);
+  assert.match(admin, /Qikink Order ID/);
+  assert.match(admin, /DOWNLOAD PRINT FILE/);
+  assert.match(remote, /from\('orders'\).*\.update/s);
+  assert.match(remote, /createSupabaseBrowserClient/);
+  assert.doesNotMatch(remote, /SUPABASE_SECRET_KEY|createSupabaseAdminClient/);
+  assert.match(tracking, /AWB \/ Tracking ID/);
+  assert.match(tracking, /TRACK SHIPMENT/);
+});
