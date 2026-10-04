@@ -16,7 +16,10 @@ function keyedEnv(name:'SUPABASE_PUBLISHABLE_KEYS'|'SUPABASE_SECRET_KEYS'){
   try{const parsed=JSON.parse(value);return String(parsed.default||Object.values(parsed)[0]||'')}catch{return ''}
 }
 export function adminClient(){
-  const url=Deno.env.get('SUPABASE_URL')||'',key=Deno.env.get('SUPABASE_SECRET_KEY')||Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')||keyedEnv('SUPABASE_SECRET_KEYS');
+  // Edge Functions always receive the project-scoped service role key. Prefer it
+  // so an unrelated deployment secret cannot accidentally point admin queries at
+  // the wrong Supabase project.
+  const url=Deno.env.get('SUPABASE_URL')||'',key=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')||Deno.env.get('SUPABASE_SECRET_KEY')||keyedEnv('SUPABASE_SECRET_KEYS');
   if(!url||!key)throw new Error('Supabase server credentials are unavailable.');
   return createClient(url,key,{auth:{persistSession:false,autoRefreshToken:false}});
 }
@@ -55,7 +58,10 @@ export async function hmacHex(secret:string,message:string){
 export function safeEqual(a:string,b:string){if(a.length!==b.length)return false;let value=0;for(let i=0;i<a.length;i++)value|=a.charCodeAt(i)^b.charCodeAt(i);return value===0}
 export function amountPaise(value:unknown){const amount=Math.round(Number(value)*100);if(!Number.isSafeInteger(amount)||amount<0)throw new Error('Invalid CASECLAN order amount.');return amount}
 export async function ownedOrder(admin:SupabaseClient,userId:string,orderId:string){
-  const{data,error}=await admin.from('orders').select('*').eq('id',orderId).eq('customer_id',userId).single();if(error||!data)throw new Error('Order not found.');return data;
+  const{data,error}=await admin.from('orders').select('*').eq('id',orderId).eq('customer_id',userId).single();
+  if(error)throw new Error(`Order lookup failed: ${error.message}`);
+  if(!data)throw new Error('Order not found.');
+  return data;
 }
 export async function paymentForProviderOrder(admin:SupabaseClient,providerOrderId:string){
   const{data,error}=await admin.from('payments').select('*').eq('provider_order_id',providerOrderId).single();if(error||!data)throw new Error('Payment attempt not found.');return data;
