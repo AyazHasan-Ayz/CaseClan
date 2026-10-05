@@ -35,6 +35,8 @@ test('admin routes are excluded from robots and require a Supabase staff role',(
  const robots=readFileSync(join(process.cwd(),'app','robots.ts'),'utf8'),admin=readFileSync(join(process.cwd(),'components','AdminApp.tsx'),'utf8');
  assert.match(robots,/['\"]\/admin\/['\"]/);
  assert.match(admin,/isAdminRole\(auth\.customer\?\.role\)/);
+ assert.match(admin,/auth\.refreshCustomer\(\)/);
+ assert.match(admin,/!profileChecked/);
  assert.match(admin,/\/admin\/login/);
  assert.doesNotMatch(admin,/caseclan-admin-session|caseclan-admin-pin|crypto\.subtle\.digest/);
  assert.doesNotMatch(admin,/defaultPassword|admin123|password\s*=/i);

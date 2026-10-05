@@ -19,6 +19,8 @@ test('auth routes and database-enforced checkout are present',()=>{
   for(const route of ['login','signup','forgot-password','reset-password','account','checkout','admin/login'])assert.equal(fs.existsSync(`app/${route}/page.tsx`),true,route);
   const admin=fs.readFileSync('components/AdminApp.tsx','utf8');
   assert.doesNotMatch(admin,/caseclan-admin-pin|caseclan-admin-session/);
+  assert.match(admin,/auth\.refreshCustomer\(\)/);
+  assert.match(admin,/!profileChecked/);
   const sql=fs.readFileSync('supabase/migrations/20260930000100_auth_and_secure_orders.sql','utf8');
   assert.match(sql,/create or replace function public\.place_order/);
   assert.match(sql,/revoke insert, update on public\.customers from authenticated/);
@@ -30,6 +32,8 @@ test('auth routes and database-enforced checkout are present',()=>{
   assert.match(checkout,/if\(!auth\.user\).*loginHref\('\/checkout\/'\)/s);
   const oauth=fs.readFileSync('components/AuthProvider.tsx','utf8');
   assert.match(oauth,/signInWithOAuth\(\{provider:'google'/);
+  assert.match(oauth,/supabase\.auth\.getUser\(\)/);
+  assert.match(oauth,/await loadCustomer\(data\.user\)/);
   const pages=fs.readFileSync('components/AuthPages.tsx','utf8');
   assert.match(pages,/CONTINUE WITH GOOGLE/);
   assert.match(pages,/GoogleIcon/);
