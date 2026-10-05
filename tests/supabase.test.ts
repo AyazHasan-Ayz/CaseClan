@@ -61,6 +61,13 @@ test('manual fulfilment migration is staff-only and stores private custom produc
   assert.match(migration, /'fulfilment_provider', 'Qikink'/);
 });
 
+test('authenticated RLS policies can resolve the current database role', () => {
+  const migration = read('supabase/migrations/20261005093454_grant_current_user_role_execute.sql');
+  assert.match(migration, /grant usage on schema private to authenticated/);
+  assert.match(migration, /grant execute on function private\.current_user_role\(\) to authenticated/);
+  assert.match(migration, /revoke execute on function private\.current_user_role\(\) from public, anon/);
+});
+
 test('admin and customer surfaces expose the manual fulfilment workflow', () => {
   const admin = read('components/AdminApp.tsx');
   const tracking = read('components/OrderTrackingSummary.tsx');
