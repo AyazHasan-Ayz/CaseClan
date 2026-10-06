@@ -58,5 +58,5 @@ Deno.serve(async(req)=>{
   if('settings' in data){const settingsSaved=await admin.from('store_settings').upsert({key:'storefront',value:settings,is_public:true},{onConflict:'key'});if(settingsSaved.error)throw settingsSaved.error;}
   if('media' in data){const mediaSaved=await admin.from('store_settings').upsert({key:'media_library',value:Array.isArray(data.media)?data.media:[],is_public:false},{onConflict:'key'});if(mediaSaved.error)throw mediaSaved.error;}
   return json(req,{ok:true,products:products.length,devices:devices.length});
- }catch(error){return json(req,{error:error instanceof Error?error.message:'Catalog update failed.'},400)}
+ }catch(error){return json(req,{error:error&&typeof error==='object'&&'message' in error?String(error.message):'Catalog update failed.'},400)}
 });
