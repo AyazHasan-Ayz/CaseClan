@@ -28,7 +28,7 @@ export type Database = {
     };
     Views: Record<string, never>;
     Functions: {
-      place_order: { Args: { payload: Json }; Returns: { id:string; order_number:string; status:string; payment_status:string; subtotal:number; shipping_amount:number; cod_fee:number; total:number } };
+      place_order: { Args: { payload: Json }; Returns: { id:string; order_number:string; status:string; payment_status:string; subtotal:number; shipping_amount:number; discount_amount:number; cod_fee:number; total:number } };
     };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;

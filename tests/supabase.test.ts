@@ -36,16 +36,55 @@ test('commerce migration is non-destructive and protects every table with RLS', 
 
 test('storefront reads Supabase first and retains the existing catalog as a safe fallback', () => {
   const provider = read('components/StoreProvider.tsx');
-  const catalog = read('lib/supabase/catalog.ts');
+  const catalog = read('lib/supabase/catalog-runtime.ts');
   assert.match(provider, /from '@\/lib\/catalog'/);
   assert.match(provider, /fetchRemoteCatalog/);
   assert.match(provider, /catalogSource='supabase'/);
   assert.match(catalog, /createSupabaseBrowserClient/);
   assert.match(catalog, /from\('products'\)/);
-  assert.match(catalog, /if \(!productsResult\.data\?\.length \|\| !modelsResult\.data\?\.length\) return null/);
+  assert.match(catalog, /from\('product_images'\)/);
+  assert.match(catalog, /product_phone_models/);
   const seed = read('supabase/migrations/20260929000200_seed_caseclan_catalog.sql');
   assert.match(seed, /on conflict \(slug\) do nothing/);
   assert.doesNotMatch(seed, /\b(delete|truncate|drop)\b/i);
+});
+
+test('catalog writes are server-authorized and storefront sections use the remote snapshot', () => {
+  const edge = read('supabase/functions/admin-catalog/index.ts');
+  const client = read('lib/supabase/admin-catalog.ts');
+  const home = read('components/Home.tsx');
+  const shop = read('components/Shop.tsx');
+  const search = read('components/Shell.tsx');
+  assert.match(edge, /authenticatedUser\(req\)/);
+  assert.match(edge, /customers.*select\('role'\)/s);
+  assert.match(edge, /staffRoles/);
+  assert.match(edge, /adminClient\(\)/);
+  assert.doesNotMatch(client, /SUPABASE_SECRET_KEY|service_role/);
+  assert.match(client, /functions\.invoke\('admin-catalog'/);
+  for (const source of [home, shop, search]) assert.match(source, /adminData/);
+});
+
+test('admin media is persistent and catalog removal is non-destructive', () => {
+  const admin = read('components/AdminApp.tsx');
+  const edge = read('supabase/functions/admin-catalog/index.ts');
+  assert.match(admin, /uploadAdminCatalogImage/);
+  assert.doesNotMatch(admin, /readAsDataURL/);
+  assert.match(admin, /Archive/);
+  assert.doesNotMatch(admin, /products:data\.products\.filter/);
+  assert.match(edge, /media_library/);
+  assert.doesNotMatch(edge, /from\('products'\)\.delete/);
+});
+
+test('checkout validates settings, prices and coupons inside Postgres', () => {
+  const migration = read('supabase/migrations/20261006090000_checkout_settings_coupons.sql');
+  const checkout = read('lib/supabase/account.ts');
+  assert.match(migration, /security definer/);
+  assert.match(migration, /status = 'active'/);
+  assert.match(migration, /price_override/);
+  assert.match(migration, /coupon_row/);
+  assert.match(migration, /usage_count = usage_count \+ 1/);
+  assert.match(migration, /store_settings/);
+  assert.match(checkout, /coupon_code/);
 });
 
 test('manual fulfilment migration is staff-only and stores private custom production assets', () => {

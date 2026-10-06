@@ -17,6 +17,7 @@ export default function ProductDetail({product:initialProduct}:{product:Product}
  const choose=(next:string)=>{initialized.current=true;setDevice(next);store.setSelectedDevice(next)};
  const price=productPrice(p,device),supportedDevices=p.devices.filter(slug=>store.adminData.devices.some(item=>item.slug===slug&&item.active!==false&&item.available!==false));
  const add=(buy=false)=>{store.add(p,device,p.colors[0],undefined,quantity);if(buy){store.setDrawer(false);router.push(auth.user?'/checkout/':loginHref('/checkout/'))}};
+ if(!store.adminData.products.some(item=>item.id===initialProduct.id&&item.status==='active'))return <section className="empty-state"><h1>Case unavailable</h1><p>This design is inactive or no longer available.</p><Link className="button" href="/shop/">SHOP CASES</Link></section>;
  return <>
   <div className="product-page">
    <p className="breadcrumbs"><Link href="/">Home</Link><span>/</span><Link href="/ready-designs/">Ready Designs</Link><span>/</span>{p.name}</p>
