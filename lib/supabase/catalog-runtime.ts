@@ -39,7 +39,7 @@ async function fetchCatalog(fallback:AdminData,admin:boolean):Promise<AdminData>
  const mappingsByProduct=new Map<string,typeof mappingsResult.data>();
  for(const mapping of mappingsResult.data||[])mappingsByProduct.set(mapping.product_id,[...(mappingsByProduct.get(mapping.product_id)||[]),mapping]);
  const imagesByProduct=new Map<string,string[]>();
- for(const image of imagesResult.data||[])imagesByProduct.set(image.product_id,[...(imagesByProduct.get(image.product_id)||[]),publicImage(image.storage_path)]);
+ for(const image of [...(imagesResult.data||[])].sort((a,b)=>Number(b.is_primary)-Number(a.is_primary)||a.sort_order-b.sort_order))imagesByProduct.set(image.product_id,[...(imagesByProduct.get(image.product_id)||[]),publicImage(image.storage_path)]);
  const reviewsByProduct=new Map<string,typeof reviewsResult.data>();
  for(const review of reviewsResult.data||[])reviewsByProduct.set(review.product_id,[...(reviewsByProduct.get(review.product_id)||[]),review]);
 

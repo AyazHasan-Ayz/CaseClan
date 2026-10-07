@@ -28,6 +28,7 @@ export type Database = {
     };
     Views: Record<string, never>;
     Functions: {
+      checkout_quote: { Args: {payload:Json}; Returns: import('../pricing').CheckoutQuote };
       place_order: { Args: { payload: Json }; Returns: { id:string; order_number:string; status:string; payment_status:string; subtotal:number; shipping_amount:number; discount_amount:number; cod_fee:number; total:number } };
     };
     Enums: Record<string, never>;

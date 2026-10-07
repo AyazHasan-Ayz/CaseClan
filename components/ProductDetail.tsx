@@ -1,6 +1,9 @@
 'use client';
+import ProductPrice from './ProductPrice';
+import {productPrice as catalogPrice} from '@/lib/pricing';
 
 import Link from 'next/link';
+import ProductGallery from './ProductGallery';
 import {useEffect,useRef,useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {ArrowRight,Check,Heart,LockKeyhole,Minus,Plus,ShieldCheck,Truck} from 'lucide-react';
@@ -23,14 +26,14 @@ export default function ProductDetail({product:initialProduct}:{product:Product}
    <p className="breadcrumbs"><Link href="/">Home</Link><span>/</span><Link href="/ready-designs/">Ready Designs</Link><span>/</span>{p.name}</p>
    <div className="product-detail-layout">
     <div className="gallery fixed-design-gallery">
-     <div className="gallery-main supplied-gallery"><img src={productImage(p)} alt={`${p.name} fixed CASECLAN phone case artwork`} width="900" height="1125"/></div>
+     <ProductGallery key={p.id} product={p}/>
      <p className="small muted">The artwork shown is the finished design. Your phone selection changes only the physical case fit.</p>
     </div>
     <div className="product-details fixed-product-details">
      <p className="eyebrow">READY DESIGN · FIXED ARTWORK</p>
      <h1>{p.name.toUpperCase()}</h1>
      <p className="detail-rating">☆☆☆☆☆ <span className="muted">New · Unrated</span></p>
-     <p className="detail-price">{money(price)} <span>Inclusive of all taxes</span></p>
+     <p className="detail-price"><ProductPrice product={p} device={device}/> <span>Inclusive of all taxes</span></p>
      <p className="product-description">A finished CASECLAN design printed exactly as shown on a premium protective case made for your selected phone.</p>
      <div className="template-lock-note"><LockKeyhole size={18}/><div><strong>Artwork locked as shown</strong><span>No names, colors, graphics, or layout elements are changed.</span></div></div>
      <label className="field-label">Phone model<select value={device} onChange={event=>choose(event.target.value)}>{supportedDevices.map(item=><option key={item} value={item}>{deviceName(item)}</option>)}</select></label>

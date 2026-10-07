@@ -7,3 +7,5 @@ out/
 tsconfig.tsbuildinfo
 qa/
 .next-production/
+
+supabase/.temp/
