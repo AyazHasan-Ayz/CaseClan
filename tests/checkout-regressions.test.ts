@@ -15,4 +15,6 @@ test('unpaid initialization, cancellation and failure never become normal orders
  assert.equal(isConfirmedOrder({paymentStatus:'Refunded',status:'Refunded'}),true);
  assert.equal(isConfirmedOrder({payment_method:'cod',payment_status:'cod_pending',status:'Confirmed'}),true);
  assert.equal(isConfirmedOrder({payment_method:'cod',payment_status:'cod_pending',status:'new'}),false);
+ assert.equal(isConfirmedOrder({paymentMethod:'Cash on Delivery',paymentStatus:'Cash on Delivery',status:'Confirmed'}),true);
+ assert.equal(isConfirmedOrder({paymentMethod:'Online Payment',paymentStatus:'Cash on Delivery',status:'Confirmed'}),false);
 });
