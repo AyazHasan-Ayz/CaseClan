@@ -5,8 +5,8 @@ import robots from '../app/robots.ts';
 import {devices,products} from '../lib/catalog.ts';
 import {productSchema} from '../lib/seo/schemas.ts';
 
-test('XML sitemap includes dynamic products and model pages but excludes transactional routes',()=>{
-  const urls=sitemap().map(entry=>entry.url);
+test('XML sitemap includes dynamic products and model pages but excludes transactional routes',async()=>{
+  const urls=(await sitemap()).map(entry=>entry.url);
   for(const product of products.filter(item=>item.kind==='ready'))assert.ok(urls.some(url=>url.endsWith(`/product/${product.id}/`)));
   for(const device of devices)assert.ok(urls.some(url=>url.endsWith(`/${device.slug}-cases/`)));
   for(const route of ['/cart/','/checkout/','/account/','/login/','/wishlist/','/search/','/track-order/'])assert.ok(!urls.some(url=>url.endsWith(route)));

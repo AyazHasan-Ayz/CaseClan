@@ -1,0 +1,14 @@
+import 'server-only';
+import {createClient} from '@supabase/supabase-js';
+import type {Database} from '@/lib/supabase/types';
+import {resolveDesignCatalog} from '../designs';
+import {products as fallbackProducts,type Product} from '@/lib/catalog';
+export async function getPublishedCommerceProducts():Promise<Product[]>{
+ const url=process.env.NEXT_PUBLIC_SUPABASE_URL,key=process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+ if(!url||!key)return fallbackProducts.filter(p=>p.status==='active');
+ try{const db=createClient<Database>(url,key,{auth:{persistSession:false},global:{fetch:(input,init)=>fetch(input,{...init,next:{revalidate:60,tags:['caseclan-cms','commerce-catalog']}})}});
+ const [rows,images,models,mappings]=await Promise.all([db.from('products').select('*').eq('status','active'),db.from('product_images').select('*').order('sort_order'),db.from('phone_models').select('id,slug').eq('status','active'),db.from('product_phone_models').select('*').eq('available',true)]);if(rows.error||images.error||models.error||mappings.error)throw new Error('Catalog read failed');
+ const remoteProducts=(rows.data||[]).map(row=>{const prior=fallbackProducts.find(p=>p.id===row.slug),meta=(row.metadata||{}) as Record<string,unknown>,urls=(images.data||[]).filter(i=>i.product_id===row.id).sort((a,b)=>Number(b.is_primary)-Number(a.is_primary)||a.sort_order-b.sort_order).map(i=>/^https?:|^\//.test(i.storage_path)?i.storage_path:`${url}/storage/v1/object/public/product-images/${i.storage_path}`),slugs=(mappings.data||[]).filter(m=>m.product_id===row.id).map(m=>models.data?.find(d=>d.id===m.phone_model_id)?.slug).filter((slug):slug is string=>!!slug);const modelPrices=Object.fromEntries((mappings.data||[]).filter(m=>m.product_id===row.id&&m.price_override!==null).map(m=>[models.data?.find(d=>d.id===m.phone_model_id)?.slug,Number(m.price_override)]).filter(([slug])=>!!slug));return {...prior,modelPrices,id:row.slug,name:row.name,price:Number(row.price),kind:row.kind,status:row.status,devices:slugs,colors:['Black'],material:row.material||'Premium printed case',style:String(meta.style||row.name),clan:'NOIR',magsafe:meta.magsafe===true,rating:0,reviews:0,collection:row.collection||'Ready Designs',rank:Number(meta.rank)||999,imageDevice:slugs[0]||'',image:urls[0]||prior?.image,gallery:urls.slice(1),compareAtPrice:row.compare_at_price??undefined,shortDescription:row.short_description||undefined,description:row.description||undefined,featured:meta.featured===true,bestSeller:meta.bestSeller===true,seoTitle:String(meta.seoTitle||''),metaDescription:String(meta.metaDescription||'')} as Product});
+ return resolveDesignCatalog(remoteProducts);
+ }catch{console.error('[CASECLAN CMS] Commerce read failed; using original fallback.');return fallbackProducts.filter(p=>p.status==='active')}
+}

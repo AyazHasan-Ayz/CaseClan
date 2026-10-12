@@ -3,6 +3,10 @@ const requireValue = (name: string, value: string | undefined) => {
   return value;
 };
 
+export function hasSupabasePublicEnv() {
+  return !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY);
+}
+
 export function getSupabasePublicEnv() {
   return {
     url: requireValue('NEXT_PUBLIC_SUPABASE_URL', process.env.NEXT_PUBLIC_SUPABASE_URL),

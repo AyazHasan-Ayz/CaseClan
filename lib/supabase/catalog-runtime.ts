@@ -4,6 +4,7 @@ import type {AdminData,Coupon,Review} from '@/lib/admin';
 import type {Device,Product} from '@/lib/catalog';
 import {createSupabaseBrowserClient} from './client';
 import type {Json} from './types';
+import {resolveDesignCatalog} from '../designs';
 
 type JsonObject=Record<string,Json|undefined>;
 const objectValue=(value:Json|undefined):JsonObject=>value&&typeof value==='object'&&!Array.isArray(value)?value as JsonObject:{};
@@ -43,7 +44,7 @@ async function fetchCatalog(fallback:AdminData,admin:boolean):Promise<AdminData>
  const reviewsByProduct=new Map<string,typeof reviewsResult.data>();
  for(const review of reviewsResult.data||[])reviewsByProduct.set(review.product_id,[...(reviewsByProduct.get(review.product_id)||[]),review]);
 
- const remoteDevices:Device[]=(modelsResult.data||[]).map(model=>{const existing=fallbackDevices.get(model.slug),metadata=objectValue(model.metadata),storedMockup=objectValue(metadata.mockup);return{name:model.name,slug:model.slug,brand:model.brand,image:existing?.image??model.display_order,active:model.status==='active',available:metadata.available!==false,displayOrder:model.display_order,mockup:Object.keys(storedMockup).length?storedMockup as unknown as Device['mockup']:existing?.mockup};});
+ const remoteDevices:Device[]=(modelsResult.data||[]).map(model=>{const existing=fallbackDevices.get(model.slug),metadata=objectValue(model.metadata),storedMockup=objectValue(metadata.mockup);return{name:model.name,slug:model.slug,brand:model.brand,image:existing?.image??model.display_order,imageUrl:typeof metadata.deviceImage==='string'?metadata.deviceImage:undefined,active:model.status==='active',available:metadata.available!==false,displayOrder:model.display_order,mockup:Object.keys(storedMockup).length?storedMockup as unknown as Device['mockup']:existing?.mockup};});
  const remoteProducts:Product[]=(productsResult.data||[]).map(row=>{
   const existing=fallbackProducts.get(row.slug),metadata=objectValue(row.metadata),mappings=mappingsByProduct.get(row.id)||[],compatibleDevices=mappings.filter(mapping=>mapping.available).map(mapping=>modelSlugById.get(mapping.phone_model_id)).filter((slug):slug is string=>!!slug),images=imagesByProduct.get(row.id)||[],reviews=reviewsByProduct.get(row.id)||[],rating=reviews.length?reviews.reduce((sum,review)=>sum+review.rating,0)/reviews.length:0;
   const modelPrices=Object.fromEntries(mappings.map(mapping=>[modelSlugById.get(mapping.phone_model_id),mapping.price_override]).filter((entry):entry is [string,number]=>typeof entry[0]==='string'&&typeof entry[1]==='number'));
@@ -54,7 +55,7 @@ async function fetchCatalog(fallback:AdminData,admin:boolean):Promise<AdminData>
  const reviews:Review[]=(reviewsResult.data||[]).map(row=>({id:row.id,productId:(productsResult.data||[]).find(product=>product.id===row.product_id)?.slug||row.product_id,customer:'Verified customer',rating:row.rating,text:row.body||row.title||'',status:row.status,verified:row.verified_purchase,createdAt:row.created_at}));
  const derivedMedia=remoteProducts.flatMap(product=>[product.image,...(product.gallery||[])].filter((url):url is string=>!!url).map((url,index)=>({id:`${product.id}-${index}`,name:index?`${product.name} gallery ${index}`:product.name,url,kind:'product' as const,createdAt:product.createdAt||''})));
  const savedMedia=Array.isArray(publicSettings.media_library)?publicSettings.media_library.filter(item=>item&&typeof item==='object'&&!Array.isArray(item)).map(item=>item as unknown as AdminData['media'][number]):[];
- return{...fallback,products:remoteProducts,devices:remoteDevices,coupons:admin?coupons:fallback.coupons,reviews,settings:{...fallback.settings,...(objectValue(publicSettings.storefront) as Partial<AdminData['settings']>)},media:admin?[...savedMedia,...derivedMedia.filter(item=>!savedMedia.some(saved=>saved.url===item.url))]:derivedMedia};
+ return{...fallback,products:resolveDesignCatalog(remoteProducts),devices:remoteDevices,coupons:admin?coupons:fallback.coupons,reviews,settings:{...fallback.settings,...(objectValue(publicSettings.storefront) as Partial<AdminData['settings']>)},media:admin?[...savedMedia,...derivedMedia.filter(item=>!savedMedia.some(saved=>saved.url===item.url))]:derivedMedia};
 }
 
 export const fetchRemoteCatalog=(fallback:AdminData)=>fetchCatalog(fallback,false);

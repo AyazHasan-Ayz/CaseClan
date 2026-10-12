@@ -1,3 +1,6 @@
+import {getPageSeo,getPhoneModels,getCmsContent} from '@/lib/cms/server';
+import {getPublishedCommerceProducts} from '@/lib/cms/commerce';
+import {cmsMetadata} from '@/lib/cms/metadata';
 import {notFound} from 'next/navigation';
 import {devices,products} from '@/lib/catalog';
 import {CartPage,SearchPage} from '@/components/UtilityPages';
@@ -33,7 +36,9 @@ export function generateStaticParams(){return [...pages,...devices.flatMap(devic
 
 export async function generateMetadata({params}:{params:Promise<{slug:string}>}){
  const {slug}=await params;
- const directDevice=devices.find(device=>device.slug===slug),caseDevice=devices.find(device=>`${device.slug}-cases`===slug);
+ const cmsPhones=await getPhoneModels(),availablePhones=cmsPhones.length?cmsPhones.map(p=>({name:p.name,slug:p.slug,brand:p.brand})):devices;
+ const seo=await getPageSeo(`/${slug}/`);if(seo&&!privatePages.has(slug))return cmsMetadata(seo,{title:`CASECLAN ${slug.replaceAll('-',' ')}`,description:'Premium phone cases from CASECLAN.',path:`/${slug}/`});
+ const directDevice=availablePhones.find(device=>device.slug===slug),caseDevice=availablePhones.find(device=>`${device.slug}-cases`===slug);
  if(caseDevice)return pageMetadata({title:`${caseDevice.name} Cases | CASECLAN`,description:`Shop premium CASECLAN cases compatible with ${caseDevice.name}, including ready designs and custom options.`,path:`/${slug}/`});
  if(directDevice)return pageMetadata({title:`${directDevice.name} Cases | CASECLAN`,description:`Explore CASECLAN cases compatible with ${directDevice.name}.`,path:`/${directDevice.slug}-cases/`,index:false});
  if(privatePages.has(slug))return pageMetadata({title:`${slug.split('-').map(word=>word[0].toUpperCase()+word.slice(1)).join(' ')} | CASECLAN`,description:`CASECLAN ${slug.replaceAll('-',' ')}.`,path:`/${slug}/`,index:false});
@@ -46,7 +51,9 @@ export async function generateMetadata({params}:{params:Promise<{slug:string}>})
 
 export default async function Page({params}:{params:Promise<{slug:string}>}){
  const {slug}=await params;
- const directDevice=devices.find(device=>device.slug===slug),caseDevice=devices.find(device=>`${device.slug}-cases`===slug),device=caseDevice||directDevice;
+ const cmsPhones=await getPhoneModels(),availablePhones=cmsPhones.length?cmsPhones.map(p=>({name:p.name,slug:p.slug,brand:p.brand})):devices;
+ const products=await getPublishedCommerceProducts();
+ const directDevice=availablePhones.find(device=>device.slug===slug),caseDevice=availablePhones.find(device=>`${device.slug}-cases`===slug),device=caseDevice||directDevice;
  if(device){const path=`/${device.slug}-cases/`,items=products.filter(product=>product.kind==='ready'&&product.devices.includes(device.slug));return <><JsonLd data={[collectionSchema(`${device.name} Cases`,path,items),breadcrumbSchema([{name:'Home',path:'/'},{name:'iPhone Cases',path:'/collections/iphone/'},{name:`${device.name} Cases`,path}])]}/><Shop device={device.slug}/></>}
  if(slug==='shop'||slug==='new-drops'||slug==='personalized'||slug==='collections'||slug==='ready-designs'){const path=slug==='ready-designs'?'/ready-designs/':'/shop/',items=products.filter(product=>product.kind==='ready');return <><JsonLd data={[collectionSchema(slug==='ready-designs'?'Ready-Design Phone Cases':'All Phone Cases',path,items),breadcrumbSchema([{name:'Home',path:'/'},{name:slug==='ready-designs'?'Ready Designs':'Shop',path}])]}/><Shop kind="ready"/></>}
  if(slug==='cart')return <CartPage/>;if(slug==='search')return <SearchPage/>;
@@ -55,7 +62,7 @@ export default async function Page({params}:{params:Promise<{slug:string}>}){
  if(isSeoLanding(slug))return <SeoLanding slug={slug}/>;
  if(slug==='wishlist')return <Wishlist/>;
  if(slug==='about'||slug==='our-story')return <><JsonLd data={pageSchema('AboutPage','About CASECLAN','/about/','CASECLAN creates premium ready-design and custom phone cases.')}/><AboutPage/></>;
- if(slug==='faq'||slug==='faqs')return <><JsonLd data={faqSchema(faqGroups)}/><FAQPage/></>;
+ if(slug==='faq'||slug==='faqs'){const faqs=(await getCmsContent()).faqs.filter(f=>f.placements?.includes('faq'));return <><JsonLd data={faqSchema(faqs.length?[{title:'Frequently Asked Questions',items:faqs.map(f=>[f.question,f.answer] as const)}]:faqGroups)}/><FAQPage/></>}
  if(slug==='track-order')return <TrackOrderPage/>;
  if(slug==='contact')return <><JsonLd data={pageSchema('ContactPage','Contact CASECLAN','/contact/','Contact CASECLAN for order, compatibility and custom artwork help.')}/><ContactPage/></>;
  if(slug==='shipping-policy'||slug==='returns-policy'||slug==='privacy-policy'||slug==='terms')return <PolicyPage slug={slug}/>;

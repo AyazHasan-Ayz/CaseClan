@@ -1,0 +1,20 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {validateMockup} from '../lib/cms/validation.ts';
+import {modelConfigs} from '../lib/mockups.ts';
+import {mergeHomepage,defaultHomepage} from '../lib/cms/defaults.ts';
+import {parse} from 'groq-js';
+import {contentQuery,productProjection,phoneProjection,postsQuery} from '../lib/cms/queries.ts';
+import {isCmsEnabled} from '../lib/cms/config.ts';
+test('CMS stays paused with missing configuration or identifiers alone',()=>{
+ assert.equal(isCmsEnabled({}),false);
+ const configured={NEXT_PUBLIC_SANITY_PROJECT_ID:'project',NEXT_PUBLIC_SANITY_DATASET:'production'};
+ assert.equal(isCmsEnabled(configured),false);
+ assert.equal(isCmsEnabled({...configured,NEXT_PUBLIC_CMS_ENABLED:'false'}),false);
+ assert.equal(isCmsEnabled({NEXT_PUBLIC_CMS_ENABLED:'true'}),false);
+ assert.equal(isCmsEnabled({...configured,NEXT_PUBLIC_CMS_ENABLED:'true'}),true);
+});
+test('all existing photographic model configurations remain valid',()=>{for(const [slug,config] of Object.entries(modelConfigs))assert.equal(validateMockup(config,slug),config)});
+test('bad printable bounds and incomplete overlays cannot be published',()=>{const base=modelConfigs['iphone-17'];assert.throws(()=>validateMockup({...base,printArea:{x:.8,y:0,width:.8,height:1}},base.slug));assert.throws(()=>validateMockup({...base,assets:{...base.assets,caseOverlay:''}},base.slug));assert.throws(()=>validateMockup(base,'another-phone'))});
+test('partial CMS content preserves original homepage sections',()=>{const home=mergeHomepage({deviceHeading:'Our phones'});assert.equal(home.hero?.heading,defaultHomepage.hero?.heading);assert.equal(home.deviceHeading,'Our phones');assert.deepEqual(home.clan,defaultHomepage.clan)});
+test('content and publication GROQ queries parse successfully',()=>{for(const query of [contentQuery,postsQuery,`*[_type=="product"]${productProjection}`,`*[_id==$id][0]{${productProjection.slice(1,-1)},commerceId}`,`*[_type=="phoneModel"]${phoneProjection}`])assert.doesNotThrow(()=>parse(query))});

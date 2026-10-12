@@ -1,6 +1,7 @@
 import type {Product} from '../catalog.ts';
 import {deviceName,productImage} from '../catalog.ts';
 import {absoluteUrl,siteConfig} from './config.ts';
+import {productSlug} from '../designs.ts';
 
 export type JsonLdValue=string|number|boolean|null|JsonLdValue[]|{[key:string]:JsonLdValue};
 
@@ -20,17 +21,17 @@ export function breadcrumbSchema(items:{name:string;path:string}[]):JsonLdValue{
 }}
 
 export function productSchema(product:Product):JsonLdValue{return {
-  '@context':'https://schema.org','@type':'Product','@id':`${absoluteUrl(`/product/${product.id}/`)}#product`,
+  '@context':'https://schema.org','@type':'Product','@id':`${absoluteUrl(`/product/${productSlug(product)}/`)}#product`,
   name:`CASECLAN ${product.name}`,image:[absoluteUrl(productImage(product))],
   description:`${product.name} with fixed CASECLAN artwork, printed on a ${product.material.toLowerCase()} for compatible flagship phones.`,
   sku:product.id,brand:{'@type':'Brand',name:siteConfig.name},color:product.colors.join(', '),material:product.material,
   additionalProperty:product.devices.map(model=>({'@type':'PropertyValue',name:'Compatible phone model',value:deviceName(model)})),
-  offers:{'@type':'Offer',url:absoluteUrl(`/product/${product.id}/`),price:product.price,priceCurrency:siteConfig.currency,availability:'https://schema.org/OutOfStock',itemCondition:'https://schema.org/NewCondition'},
+  offers:{'@type':'Offer',url:absoluteUrl(`/product/${productSlug(product)}/`),price:product.price,priceCurrency:siteConfig.currency,availability:'https://schema.org/OutOfStock',itemCondition:'https://schema.org/NewCondition'},
 }}
 
 export function collectionSchema(name:string,path:string,products:Product[]):JsonLdValue{return {
   '@context':'https://schema.org','@type':'CollectionPage','@id':`${absoluteUrl(path)}#collection`,name,url:absoluteUrl(path),
-  mainEntity:{'@type':'ItemList',numberOfItems:products.length,itemListElement:products.map((product,index)=>({'@type':'ListItem',position:index+1,url:absoluteUrl(`/product/${product.id}/`),name:product.name}))},
+  mainEntity:{'@type':'ItemList',numberOfItems:products.length,itemListElement:products.map((product,index)=>({'@type':'ListItem',position:index+1,url:absoluteUrl(`/product/${productSlug(product)}/`),name:product.name}))},
 }}
 
 export function faqSchema(groups:readonly {title:string;items:readonly (readonly [string,string])[]}[]):JsonLdValue{return {

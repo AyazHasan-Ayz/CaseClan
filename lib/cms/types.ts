@@ -1,0 +1,15 @@
+import type {PortableTextBlock} from '@portabletext/types';
+import type {ModelConfig} from '@/lib/mockups';
+export type CmsImage={url:string;alt?:string;width?:number;height?:number};
+export type CmsSeo={title?:string;description?:string;canonical?:string;image?:CmsImage;noindex?:boolean};
+export type CmsLink={label:string;href:string};
+export type CmsProduct={_id:string;_rev:string;slug:string;name:string;status:'active'|'draft'|'archived';kind:'ready'|'custom';price:number;compareAtPrice?:number;description?:string;shortDescription?:string;material?:string;features?:string[];images:CmsImage[];devices:string[];category?:string;designType?:string;featured?:boolean;bestSeller?:boolean;rank?:number;seo?:CmsSeo};
+export type CmsPhone={_id:string;slug:string;name:string;brand:string;active:boolean;sortOrder:number;image?:CmsImage;modelUrl?:string;mockup:ModelConfig;supportedCaseTypes?:string[]};
+export type CmsReview={_id:string;customer:string;rating:number;text:string;verified:boolean;active:boolean;productSlug?:string;image?:CmsImage};
+export type CmsFaq={_id:string;question:string;answer:string;category?:string;placements:string[];productSlugs?:string[]};
+export type CmsStep={title:string;description:string;icon?:string};
+export type CmsHomepage={hero?:{eyebrow:string;heading:string;description:string;image?:CmsImage;primary:CmsLink;secondary:CmsLink;note:string};deviceHeading?:string;deviceSlugs?:string[];designHeading?:string;designSlugs?:string[];bestSellerHeading?:string;bestSellerSlugs?:string[];bestSellerCount?:number;featuredHeading?:string;featuredSlugs?:string[];customBanner?:{eyebrow:string;heading:string;description:string;image?:CmsImage;cta:CmsLink};howTitle?:string;steps?:CmsStep[];whyTitle?:string;whyDescription?:string;benefits?:CmsStep[];clan?:{heading:string;title:string;description:string;names:string;image?:CmsImage;cta:CmsLink};reviewHeading?:string;reviewIds?:string[];seo?:CmsSeo};
+export type CmsSiteSettings={brandName?:string;logo?:CmsImage;announcement?:string;contactEmail?:string;supportPhone?:string;socialLinks?:CmsLink[];shippingThreshold?:number;returnDays?:number;footerTagline?:string;footerMenus?:{title:string;links:CmsLink[]}[];newsletterTitle?:string;newsletterText?:string;copyright?:string;seo?:CmsSeo};
+export type CmsCustomizer={fonts?:{label:string;family:string}[];colors?:string[];suggestions?:string[];maxCharacters?:number;maxTextElements?:number;uploadTypes?:string[];price?:number;presets?:{name:string;active:boolean;background:string}[]};
+export type CmsPost={_id:string;title:string;slug:string;image?:CmsImage;author:string;publishedAt:string;excerpt:string;body:PortableTextBlock[];category?:string;tags?:string[];seo?:CmsSeo};
+export type CmsContent={homepage:CmsHomepage|null;settings:CmsSiteSettings|null;customizer:CmsCustomizer|null;faqs:CmsFaq[];reviews:CmsReview[];announcement?:{text:string;link?:CmsLink}|null};

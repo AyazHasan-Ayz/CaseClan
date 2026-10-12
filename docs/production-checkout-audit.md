@@ -4,7 +4,7 @@ Production: https://caseclan.vercel.app
 
 ## Delivery status
 
-Code fixes are deployed through commits `96bc754`, `fdfa227`, and `dbf6047`. TypeScript passed, all 58 automated tests passed, and the production build generated 109 routes successfully. Live desktop/mobile price, gallery, checkout total, cancellation, retry initialization, and COD flows were exercised. Successful Razorpay capture, actual callback signature verification, and a signed successful-payment webhook remain unverified because test checkout rejected the test cards.
+Code fixes are deployed through commits `96bc754`, `fdfa227`, `dbf6047`, and `ba8d871`. TypeScript passed, all 58 automated tests passed, and the production build generated 109 routes successfully. Live desktop/mobile price, gallery, checkout total, cancellation, retry initialization, and COD flows were exercised. Successful Razorpay capture, actual callback signature verification, and a signed successful-payment webhook remain unverified because test checkout rejected the test cards.
 
 ## Root causes and fixes
 
@@ -35,6 +35,7 @@ The deployed Edge Functions are `razorpay-checkout`, `razorpay-verify`, `razorpa
 - Latest rejected mobile card test left the cart intact, exposed TRY PAYMENT AGAIN after exiting, and produced no captured-payment confirmation. No app console errors were captured in that test tab.
 - A fresh remote SQL read confirmed the latest attempt is internal order 16, total ₹599, provider order `order_Tlqc1Bh5L9dMmu`, order state Payment Pending, payment state cancelled, no provider payment ID, and `signature_verified=false`. It was not converted into a paid/confirmed order.
 - Reloaded customer and admin order lists showed only the two cancelled COD QA orders (14 and 15); unpaid prepaid attempts 13 and 16 were absent from both lists.
+- A real remote read found two `payment.failed` events for order 13 (`pay_TlJMbX5Q1GR0BR` and `pay_TlJXx04AeHZv4g`). The webhook validates HMAC before recording these events, so signed failed-payment delivery has been exercised. No successful capture event was verified.
 
 ## Razorpay test blocker
 
