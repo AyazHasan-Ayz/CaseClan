@@ -1,6 +1,6 @@
 # CASECLAN
 
-Premium personalized-cover frontend built with the existing Next.js 15, React 19, TypeScript and Tailwind/CSS architecture.
+CASECLAN ecommerce storefront built with Next.js 15, React 19, TypeScript and Tailwind/CSS, Supabase commerce/Auth and Razorpay checkout.
 
 ## Run
 
@@ -34,21 +34,21 @@ The homepage uses the supplied lifestyle hero, ten supplied device photographs, 
 
 Routes include `/shop`, `/collections/iphone`, `/collections/samsung`, `/personalized`, `/ready-designs`, `/custom-upload`, `/coming-soon`, `/wishlist`, `/cart`, `/account`, `/search`, `/checkout`, ten device categories and six product details. Existing `/iphone`, `/samsung`, `/clans` and clan paths remain usable.
 
-Customers can choose a device, name, font, text color and style; preview a digital artwork proof; upload an image with print instructions; save favourites; configure a case through quick-add; manage cart quantities; and complete a local demo checkout. Search works by product, device and style. The read-only WebMCP catalog is retained.
+Ready designs are fixed artwork: choose a compatible phone, then add to cart or buy. The separate customizer starts with a blank case and supports text, images and transforms. Cart and wishlist work for guests; checkout requires Supabase authentication. Search reads the same catalog as the storefront. The read-only WebMCP catalog is retained.
 
 ## Assets and data
 
-`lib/catalog.ts` centralizes products, device compatibility and asset mappings. The supplied original hero is `public/hero-caseclan-lifestyle.png`; the site serves its optimized WebP derivative. `scripts/prepare-hero.mjs` regenerates that derivative.
+`data/designs.ts` is the centralized file source, mapped through `lib/designs.ts` and `lib/catalog.ts`. The Supabase catalog supplies published admin products when configured; every storefront section uses the same merged source. The supplied original hero is `public/hero-caseclan-lifestyle.png`; the site serves its optimized WebP derivative. `scripts/prepare-hero.mjs` regenerates that derivative.
 
 Supplied Ayaz photographs illustrate the case; the separate live preview represents the chosen personalization. It is clearly labeled as an illustrative artwork proof, not a manufactured-product photograph.
 
 ## Integration boundary
 
-This is a complete frontend preview. Cart, wishlist, uploaded preview image, order, profile and mailing-list preference are stored in this browser under `caseclan-store-v1`. No real payments, manufacturing orders, emails or support messages are sent. Artwork is resized locally before preview storage. Browser storage has limited capacity, and a visible notice explains any persistence failure.
+Cart, wishlist and studio drafts persist on the device. Supabase stores authenticated commerce orders and customer data with RLS; server-side functions validate totals and payments. Razorpay remains in Test Mode until separately approved for live sales. Qikink automatic fulfilment is disabled; admins manage fulfilment and tracking manually. Original uploaded artwork is retained separately from the preview for print export. Browser storage has limited capacity, and a visible notice explains persistence failures.
 
 Clan membership is not awarded by launch orders. Existing legacy membership data is preserved but hidden; the pure membership rules remain reserved for a future release. Archived product orders render safely.
 
-Before real sales, connect authenticated account APIs, authoritative product prices and inventory, a payment gateway, original artwork storage and review, fulfilment, and transactional messaging. Publish verified specifications, final personalized-return terms and genuine customer reviews.
+Before live payments, complete gateway/account approval and production acceptance testing. Validate fulfilment print specifications and transactional messaging separately. See `docs/production-domain-migration.md` for applied production configuration and verification limits.
 
 ## September 2026 customization studio
 
