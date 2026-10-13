@@ -6,5 +6,6 @@ export async function POST(request: Request, context: {params: Promise<{action: 
   return proxyCommerce(request, action, {
     url: process.env.NEXT_PUBLIC_SUPABASE_URL,
     publishableKey: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+    allowedOrigins: process.env.CASECLAN_ALLOWED_ORIGINS,
   });
 }

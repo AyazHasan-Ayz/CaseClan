@@ -1,8 +1,28 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {proxyCommerce} from '../lib/commerce-proxy.ts';
+import {isAllowedRequestOrigin,normalizeOrigin} from '../lib/request-origins.ts';
 const config={url:'https://example.supabase.co',publishableKey:'public-test-key'};
 const request=(headers:Record<string,string>={},body='{}')=>new Request('https://caseclan.in/api/commerce/razorpay-checkout/',{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer customer-jwt',...headers},body});
+
+test('configured browser origins survive Netlify internal URL changes without trusting forwarded hosts',async()=>{
+ for(const origin of ['https://caseclan.in','https://www.caseclan.in']){
+  const req=new Request('http://internal.netlify.local/api/commerce/razorpay-checkout/',{method:'POST',headers:{origin,'content-type':'application/json',authorization:'Bearer customer-jwt','x-forwarded-host':'evil.example','x-forwarded-proto':'http'},body:'{}'});
+  const result=await proxyCommerce(req,'razorpay-checkout',config,async()=>Response.json({providerOrderId:'test-order'}));
+  assert.equal(result.status,200);
+ }
+ assert.equal(isAllowedRequestOrigin(request({origin:'https://evil.example','x-forwarded-host':'evil.example'})),false);
+});
+test('origin parsing trims entries and slashes but rejects wildcards, null and non-origin URLs',()=>{
+ assert.equal(isAllowedRequestOrigin(request({origin:' https://caseclan.in/ '}),' https://caseclan.in/ , https://www.caseclan.in/ '),true);
+ assert.equal(isAllowedRequestOrigin(request({origin:'http://localhost:3000'})),true);
+ assert.equal(isAllowedRequestOrigin(request({origin:'https://caseclan.vercel.app'}),'https://caseclan.vercel.app, https://caseclan.in'),true);
+ for(const value of ['null','https://caseclan.in.evil.example','https://caseclan.in/path','https://user@caseclan.in','https://caseclan.in?query=1','https://*.caseclan.in'])assert.equal(isAllowedRequestOrigin(request({origin:value})),false,value);
+ assert.equal(isAllowedRequestOrigin(request({origin:'https://caseclan.in'}),'*'),false);
+ assert.equal(isAllowedRequestOrigin(request({'sec-fetch-site':'cross-site'})),false);
+ assert.equal(isAllowedRequestOrigin(request(),undefined,true),false);
+ assert.equal(normalizeOrigin('https://CASECLAN.IN:443/'),'https://caseclan.in');
+});
 
 test('commerce proxy rejects guests, cross-site requests and arbitrary actions before forwarding',async()=>{
  const never:typeof fetch=async()=>{throw new Error('Must not forward')};

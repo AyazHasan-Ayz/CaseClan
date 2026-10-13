@@ -1,13 +1,16 @@
+import {isAllowedRequestOrigin, normalizeOrigin} from './request-origins.ts';
 export const commerceActions = ['razorpay-checkout', 'razorpay-verify', 'razorpay-status', 'admin-catalog'] as const;
 export type CommerceAction = typeof commerceActions[number];
 
 // Forward the customer's JWT, never an admin key. Each Edge Function still
 // validates the user, order ownership and/or fresh admin role itself.
-export async function proxyCommerce(request: Request, action: string, config: {url?: string; publishableKey?: string}, transport: typeof fetch = fetch) {
+export async function proxyCommerce(request: Request, action: string, config: {url?: string; publishableKey?: string; allowedOrigins?: string}, transport: typeof fetch = fetch) {
   const json = (error: string, status: number) => Response.json({error}, {status, headers: {'Cache-Control': 'no-store'}});
   if (!commerceActions.includes(action as CommerceAction)) return json('Unknown commerce action.', 404);
-  const origin = request.headers.get('origin');
-  if ((origin && origin !== new URL(request.url).origin) || request.headers.get('sec-fetch-site') === 'cross-site') return json('Invalid origin.', 403);
+  if (!isAllowedRequestOrigin(request, config.allowedOrigins)) return json('Invalid origin.', 403);
+  const origin = normalizeOrigin(request.headers.get('origin'));
+  const runtimeOrigin = new URL(request.url).origin;
+  if (origin && origin !== runtimeOrigin) console.info('[commerce origin] configured origin accepted despite runtime URL mismatch', {origin, runtimeOrigin, forwardedHost: request.headers.get('x-forwarded-host')?.slice(0, 255), forwardedProto: request.headers.get('x-forwarded-proto')?.slice(0, 20)});
   const authorization = request.headers.get('authorization');
   if (!authorization || !/^Bearer \S+$/i.test(authorization)) return json('Authentication required.', 401);
   if (!config.url || !config.publishableKey) return json('Commerce service is not configured.', 503);
