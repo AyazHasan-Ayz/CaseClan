@@ -1,0 +1,12 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[context.production.environment]
+  NEXT_PUBLIC_SITE_URL = "https://caseclan.in"
+
+# Netlify automatically installs its current Next.js/OpenNext adapter.
+# Secrets belong in the Netlify dashboard, never in this file.

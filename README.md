@@ -6,8 +6,27 @@ Premium personalized-cover frontend built with the existing Next.js 15, React 19
 
 - `npm run dev`: development preview on port 3000.
 - `npm test`: personalization and reserved future membership rules.
-- `npm run build`: production static export in `out/`.
-- `npm start`: serve the export on port 3001.
+- `npm run build`: production Next.js build in `.next/`.
+- `npm start`: serve the production build on port 3000.
+- `npm run check:seo -- http://localhost:3000`: verify SEO against a running build.
+
+## Production domain and hosting
+
+Production runs at `https://caseclan.in` on Netlify. `netlify.toml` sets the
+Next.js build/output and production `NEXT_PUBLIC_SITE_URL`; Netlify supplies
+its automatic Next.js adapter. Existing public Supabase variables must be
+configured for builds and functions in the Netlify dashboard. CMS remains disabled.
+
+Payment and admin catalog mutations use relative `/api/commerce/<action>/`
+routes, forwarding the signed-in customer's token to the existing Supabase
+Edge Functions. Those functions still enforce user identity, order ownership,
+fresh admin roles and payment verification. Supabase Auth/Storage and Razorpay's
+SDK remain external service URLs. No service-role or payment secret is needed
+in the browser or this proxy.
+
+Supabase Auth must allow the production domain for login, signup and reset
+redirects. The Razorpay webhook remains the existing Supabase Edge Function
+endpoint; a domain migration does not move it to this website.
 
 ## Customer journeys
 

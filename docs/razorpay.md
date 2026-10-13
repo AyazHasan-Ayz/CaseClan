@@ -4,7 +4,7 @@ The storefront is a static Next.js export. Razorpay order creation and verificat
 
 ## Test-mode secrets
 
-Set `RAZORPAY_MODE=test`, `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `RAZORPAY_WEBHOOK_SECRET`, and `CASECLAN_ALLOWED_ORIGINS=https://caseclan.vercel.app` as Supabase Edge Function secrets. The code also accepts explicit test/live key pairs. Live mode must remain disabled until the test-mode checks pass.
+Set `RAZORPAY_MODE=test`, `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `RAZORPAY_WEBHOOK_SECRET`, and `CASECLAN_ALLOWED_ORIGINS=https://caseclan.in` as Supabase Edge Function secrets. The code also accepts explicit test/live key pairs. Live mode must remain disabled until the test-mode checks pass.
 
 ## Razorpay webhook
 

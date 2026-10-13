@@ -1,5 +1,6 @@
 'use client';
-import {createSupabaseBrowserClient} from '@/lib/supabase/client';
+import {invokeCommerce} from '@/lib/supabase/commerce-api';
+import type {CommerceAction} from '@/lib/commerce-proxy';
 import type {CustomerProfile} from '@/lib/commerce';
 
 export type RazorpayCheckoutSession={keyId:string;providerOrderId:string;caseclanOrderId:string;caseclanOrderNumber:string;amount:number;currency:string;timings?:{serverMs:number;providerMs:number}};
@@ -8,8 +9,8 @@ type RazorpayFailure={error?:{code?:string;description?:string;reason?:string;me
 type RazorpayInstance={open:()=>void;on:(event:'payment.failed',handler:(response:RazorpayFailure)=>void)=>void};
 declare global{interface Window{Razorpay?:new(options:Record<string,unknown>)=>RazorpayInstance}}
 
-async function invoke<T>(name:string,body:Record<string,unknown>){
- const{data,error}=await createSupabaseBrowserClient().functions.invoke(name,{body});
+async function invoke<T>(name:CommerceAction,body:Record<string,unknown>){
+ const{data,error}=await invokeCommerce(name,body);
  if(error){
   let message=error.message;
   const response=(error as {context?:Response}).context;

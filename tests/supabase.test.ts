@@ -60,7 +60,7 @@ test('catalog writes are server-authorized and storefront sections use the remot
   assert.match(edge, /staffRoles/);
   assert.match(edge, /adminClient\(\)/);
   assert.doesNotMatch(client, /SUPABASE_SECRET_KEY|service_role/);
-  assert.match(client, /functions\.invoke\('admin-catalog'/);
+  assert.match(client, /invokeCommerce\('admin-catalog'/);
   for (const source of [home, shop, search]) assert.match(source, /adminData/);
 });
 

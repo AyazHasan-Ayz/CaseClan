@@ -5,7 +5,7 @@ const encoder=new TextEncoder();
 
 export function cors(req:Request){
   const origin=req.headers.get('origin')||'';
-  const configured=(Deno.env.get('CASECLAN_ALLOWED_ORIGINS')||'https://caseclan.vercel.app,http://localhost:3000').split(',').map(v=>v.trim());
+  const configured=(Deno.env.get('CASECLAN_ALLOWED_ORIGINS')||'https://caseclan.in,https://www.caseclan.in,http://localhost:3000').split(',').map(v=>v.trim());
   const allowed=configured.includes(origin)?origin:configured[0];
   return {'Access-Control-Allow-Origin':allowed,'Access-Control-Allow-Headers':'authorization, x-client-info, apikey, content-type','Access-Control-Allow-Methods':'POST, OPTIONS','Vary':'Origin'};
 }

@@ -32,13 +32,13 @@ The final local build displayed the current Mercedes product at INR 599 with six
 3. Securely provision `SANITY_API_READ_TOKEN` for server draft preview and `SANITY_API_WRITE_TOKEN` for the one-time import. The runtime publish endpoint reads only published public documents and does not need the write token. Remove the import token from runtime deployment if unnecessary.
 4. Generate a strong `SANITY_REVALIDATE_SECRET` and configure it in Vercel and the Sanity webhook. Never prefix private tokens with `NEXT_PUBLIC_`.
 5. Keep `SUPABASE_SECRET_KEY` server-only. Apply the additive migration `20261009164319_cms_catalog_publication.sql`; it grants the new publication function only to `service_role`, not browser/customer roles. Existing catalog/order data is preserved.
-6. Configure Sanity CORS for `https://caseclan.vercel.app` and `http://localhost:3000`, allowing credentials for Studio sign-in. Restrict trusted origins.
+6. Configure Sanity CORS for `https://caseclan.in` and `http://localhost:3000`, allowing credentials for Studio sign-in. Restrict trusted origins.
 7. Run `npm run cms:import -- --dry-run`, then `npm run cms:import` after reviewing the plan. It reads the current public Supabase catalog, uploads existing media, creates stable IDs, and uses `createIfNotExists`; existing CMS documents are not overwritten. It does not delete Supabase content.
 8. Deploy with the Next.js framework preset and default build output, not the old static `out` directory. Server routes are required for secure preview and revalidation. No changes to checkout Edge Functions are needed.
 
 ## Signed publish webhook
 
-URL: `https://caseclan.vercel.app/api/cms/revalidate/`
+URL: `https://caseclan.in/api/cms/revalidate/`
 
 Dataset: the chosen production dataset. Trigger on create/update, excluding drafts. Projection:
 

@@ -1,6 +1,6 @@
 export const siteConfig = {
   name: 'CASECLAN',
-  url: (process.env.NEXT_PUBLIC_SITE_URL || 'https://caseclan.ayazbhai787.chatgpt.site').replace(/\/$/, ''),
+  url: (process.env.NEXT_PUBLIC_SITE_URL || 'https://caseclan.in').replace(/\/$/, ''),
   defaultImage: '/images/hero-caseclan-lifestyle.webp',
   description: 'Premium ready-design phone cases and a blank studio for creating your own custom case.',
   currency: 'INR',
