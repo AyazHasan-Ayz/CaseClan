@@ -56,3 +56,13 @@ A temporary active design was added once to `data/designs.ts` and included in a 
 - No captured console errors; 67 automated tests passed.
 
 Evidence: `qa/mobile-design-visibility-results.json` and `qa/mobile-design-{320,375,390,430}.jpg`. The temporary design was then removed, and the final catalog rebuilt. No live deployment or database changes were made.
+
+## Ready-design purchase buttons — 2026-10-12
+
+Purchase buttons now follow the READY DESIGN label at the top of product details, immediately after the gallery on mobile and before title/description/features. Add to Cart is outlined and Buy Now is black. They stack at full width on mobile and share a desktop row, with a 14px gap.
+
+Both actions validate the selected phone against currently supported/available models. Missing selection shows `Please select your phone model.` and scrolls/focuses the selector without adding an item or navigating. Add to Cart keeps the selected quantity/model and opens the existing drawer. Buy Now adds a matching item only if needed, then follows the existing checkout/login route; authentication remains required for guests.
+
+Verification: 67 tests and the production build passed. Browser checks at 320, 375, 390 and 430 confirmed full-width stacked buttons, outlined/black styling, 14px gap, placement before description, and no horizontal overflow; 1280 confirmed side-by-side buttons. Both missing-model actions were blocked and focused the selector. Selecting iPhone 16 Pro opened the cart drawer with that variant. Buy Now then redirected to login with checkout as the return route, with one cart item at quantity one (no duplicate). The local test item was removed. No console errors, order creation, payment submission, database change or deployment occurred.
+
+Evidence: `qa/ready-design-purchase-layout.json`, `qa/ready-design-purchase-mobile.jpg`, and `qa/ready-design-purchase-desktop.jpg`.
