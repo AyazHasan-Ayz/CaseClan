@@ -11,9 +11,11 @@ export function canRetryPayment(status:PaymentStatus){return status==='Pending'|
 export function paymentFields(payment?:PaymentRow|null){return payment?{paymentProvider:payment.provider||undefined,razorpayOrderId:payment.provider_order_id||undefined,razorpayPaymentId:payment.provider_payment_id||undefined,expectedAmount:payment.expected_amount==null?undefined:payment.expected_amount/100,receivedAmount:payment.received_amount==null?undefined:payment.received_amount/100,signatureVerified:payment.signature_verified||false,paymentVerifiedAt:payment.verified_at||undefined}:{};}
 
 /** Payment initialization is not an ecommerce order. Keep historical attempts internal. */
-export function isConfirmedOrder(row:{payment_status?:string;paymentStatus?:string;payment_method?:string|null;paymentMethod?:string;status?:string}){
+export function isConfirmedOrder(row:{payment_status?:string;paymentStatus?:string;payment_method?:string|null;paymentMethod?:string;status?:string;confirmedAt?:string;metadata?:unknown}){
  const payment=(row.payment_status||row.paymentStatus||'').toLowerCase();
  if(['paid','refunded'].includes(payment))return true;
  const method=(row.payment_method||row.paymentMethod||'').toLowerCase();
- return ['cod','cash on delivery'].includes(method)&&['cod_pending','cash on delivery'].includes(payment)&&!['new','pending','payment pending','order placed',''].includes((row.status||'').toLowerCase());
+ const metadata=row.metadata&&typeof row.metadata==='object'?row.metadata as Record<string,unknown>:{};
+ const confirmed=!!(row.confirmedAt||metadata.confirmed_at);
+ return ['cod','cash on delivery'].includes(method)&&['cod_pending','cash on delivery'].includes(payment)&&(confirmed||!['new','pending','payment pending','order placed',''].includes((row.status||'').toLowerCase()));
 }

@@ -1,3 +1,4 @@
+import {parseCoupon} from '../_shared/coupons.ts';
 import{adminClient,authenticatedUser,cors,json}from'../_shared/razorpay.ts';
 
 type RecordValue=Record<string,unknown>;
@@ -53,7 +54,7 @@ Deno.serve(async(req)=>{
    if(staleIds.length){const result=await admin.from('product_images').delete().in('id',staleIds);if(result.error)throw result.error}
   }
 
-  for(const coupon of coupons){const row={id:text(coupon.id),code:text(coupon.code).toUpperCase(),discount_type:coupon.kind==='fixed'?'fixed':'percentage',value:Number(coupon.value)||0,minimum_cart_value:Number(coupon.minimum)||0,usage_limit:numberOrNull(coupon.usageLimit),starts_at:text(coupon.startsAt)||null,ends_at:text(coupon.endsAt)||null,active:coupon.active!==false,metadata:{maximum_discount:numberOrNull(coupon.maximum)}};const result=await admin.from('coupons').upsert(row);if(result.error)throw result.error}
+  for(const coupon of coupons){const c=parseCoupon(coupon);const row={id:text(coupon.id),code:c.code,discount_type:c.kind,value:c.value,minimum_cart_value:c.minimum,usage_limit:c.usageLimit??null,starts_at:c.startsAt||null,ends_at:c.endsAt||null,active:c.active,metadata:{maximum_discount:c.maximum??null,per_user_limit:c.perUserLimit??null}};const result=await admin.from('coupons').upsert(row);if(result.error)throw result.error}
   for(const review of reviews){const result=await admin.from('reviews').update({status:review.status,verified_purchase:!!review.verified}).eq('id',text(review.id));if(result.error)throw result.error}
   if('settings' in data){const settingsSaved=await admin.from('store_settings').upsert({key:'storefront',value:settings,is_public:true},{onConflict:'key'});if(settingsSaved.error)throw settingsSaved.error;}
   if('media' in data){const mediaSaved=await admin.from('store_settings').upsert({key:'media_library',value:Array.isArray(data.media)?data.media:[],is_public:false},{onConflict:'key'});if(mediaSaved.error)throw mediaSaved.error;}

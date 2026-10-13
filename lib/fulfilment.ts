@@ -1,7 +1,7 @@
 import type {Json} from '@/lib/supabase/types';
 import type {Order,StatusHistoryItem} from '@/components/StoreProvider';
 
-export const manualOrderStatuses = ['Processing','Printing','Packed','Shipped','Out for Delivery','Delivered','Cancelled'] as const;
+export const manualOrderStatuses = ['Pending','Confirmed','Processing','Printing','Printed','Packed','Shipped','Out for Delivery','Delivered','Cancelled','RTO','On Hold'] as const;
 export const fulfilmentStatuses = ['Pending','Submitted','In Production','Fulfilled','On Hold','Cancelled'] as const;
 
 export function jsonRecord(value:Json|undefined):Record<string,Json|undefined>{
@@ -11,6 +11,8 @@ export function jsonRecord(value:Json|undefined):Record<string,Json|undefined>{
 export function manualFulfilmentFromMetadata(value:Json):Partial<Order>{
   const metadata=jsonRecord(value),history=Array.isArray(metadata.status_history)?metadata.status_history:[];
   return {
+    couponCode:typeof metadata.coupon_code==='string'?metadata.coupon_code:undefined,
+    confirmedAt:typeof metadata.confirmed_at==='string'?metadata.confirmed_at:undefined,
     fulfilmentProvider:typeof metadata.fulfilment_provider==='string'?metadata.fulfilment_provider:'Qikink',
     qikinkOrderId:typeof metadata.qikink_order_id==='string'?metadata.qikink_order_id:undefined,
     fulfilmentStatus:typeof metadata.fulfilment_status==='string'?metadata.fulfilment_status:'Pending',
@@ -25,6 +27,5 @@ export function manualFulfilmentFromMetadata(value:Json):Partial<Order>{
 
 export function statusForCustomer(status:string){
   if(status==='new'||status==='New')return 'Order Placed';
-  if(status==='Processing'||status==='Printing')return 'Printing / Processing';
   return status;
 }

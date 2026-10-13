@@ -18,7 +18,7 @@ export type Database = {
       product_phone_models: Table<{ product_id: string; phone_model_id: string; sku: string | null; price_override: number | null; available: boolean; created_at: string }>;
       customers: Table<Timestamped & { id: string; email: string | null; phone: string | null; full_name: string | null; role: 'customer' | 'owner' | 'admin' | 'staff'; metadata: Json }>;
       addresses: Table<Timestamped & { id: string; customer_id: string; label: string | null; recipient_name: string; phone: string; line1: string; line2: string | null; landmark: string | null; city: string; state: string; postal_code: string; country_code: string; is_default: boolean }>;
-      orders: Table<Timestamped & { id: string; order_number: number; customer_id: string | null; guest_email: string | null; status: string; payment_status: string; payment_method: string | null; currency: string; subtotal: number; shipping_amount: number; discount_amount: number; cod_fee: number; total: number; shipping_address: Json; tracking_id: string | null; courier: string | null; admin_note: string | null; metadata: Json }>;
+      orders: Table<Timestamped & { id: string; order_number: number; customer_id: string | null; guest_email: string | null; status: string; status_updated_at: string | null; payment_status: string; payment_method: string | null; currency: string; subtotal: number; shipping_amount: number; discount_amount: number; cod_fee: number; total: number; shipping_address: Json; tracking_id: string | null; courier: string | null; admin_note: string | null; metadata: Json }>;
       payments: Table<Timestamped & { id: string; order_id: string; customer_id: string | null; provider: 'razorpay' | 'cod'; provider_order_id: string | null; provider_payment_id: string | null; expected_amount: number; received_amount: number | null; currency: string; status: 'pending' | 'paid' | 'failed' | 'cancelled' | 'amount_mismatch' | 'refunded'; payment_method: string | null; signature_verified: boolean; verified_at: string | null; metadata: Json }>;
       order_items: Table<{ id: string; order_id: string; product_id: string | null; phone_model_id: string | null; product_name: string; sku: string | null; quantity: number; unit_price: number; fixed_design_id: string | null; item_type: 'ready-design' | 'custom-case'; metadata: Json; created_at: string }>;
       customizations: Table<Timestamped & { id: string; order_item_id: string; customer_id: string | null; design_state: Json; customer_upload_paths: string[]; preview_path: string | null; print_ready_path: string | null; status: string; metadata: Json }>;
@@ -28,6 +28,7 @@ export type Database = {
     };
     Views: Record<string, never>;
     Functions: {
+      update_order_fulfilment: {Args:{order_uuid:string;changes:Json};Returns:Json};
       publish_cms_product: { Args: { payload: Json }; Returns: string };
       checkout_quote: { Args: {payload:Json}; Returns: import('../pricing').CheckoutQuote };
       place_order: { Args: { payload: Json }; Returns: { id:string; order_number:string; status:string; payment_status:string; subtotal:number; shipping_amount:number; discount_amount:number; cod_fee:number; total:number } };

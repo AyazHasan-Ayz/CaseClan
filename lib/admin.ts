@@ -3,7 +3,7 @@ import {devices as seededDevices,products as seededProducts} from './catalog.ts'
 import {modelConfigs} from './mockups.ts';
 
 export type ProductStatus='active'|'draft'|'archived';
-export type Coupon={id:string;code:string;kind:'percentage'|'fixed';value:number;minimum:number;maximum?:number;usageLimit?:number;startsAt:string;endsAt:string;active:boolean};
+export type Coupon={id:string;code:string;kind:'percentage'|'fixed';value:number;minimum:number;maximum?:number;usageLimit?:number;usageCount?:number;perUserLimit?:number;startsAt:string;endsAt:string;active:boolean};
 export type Review={id:string;productId:string;customer:string;rating:number;text:string;status:'pending'|'approved'|'hidden';verified:boolean;createdAt:string};
 export type MediaItem={id:string;name:string;url:string;kind:'product'|'artwork'|'mockup';createdAt:string};
 export type StoreSettings={storeName:string;supportEmail:string;supportPhone:string;currency:string;codEnabled:boolean;onlinePaymentsEnabled:boolean;shippingCharge:number;freeShippingThreshold:number;codFee:number;customCasePrice:number;customizationEnabled:boolean};
